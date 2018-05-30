@@ -1,0 +1,27 @@
+html, body, #root, .app {
+    height: 100%;
+}
+
+.fix-space-4xs { height: 5px; }
+.fix-space-3xs { height: 10px; }
+.fix-space-xxs { height: 15px; }
+.fix-space-xs  { height: 20px; }
+.fix-space-sm  { height: 25px; }
+.fix-space-md  { height: 40px; }
+.fix-space-lg  { height: 60px; }
+.fix-space-xl  { height: 80px; }
+.fix-space-xxl { height: 100px; }
+.fix-space-3xl { height: 150px; }
+.fix-space-4xl { height: 220px; }
+
+.full-width  { width: 100%; }
+.full-height { height: 100%; }
+
+.paper {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.paper-decorator {
+    background: #9FE0FC;
+}

@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+requests = "*"
+flask-api = "*"
+uwsgi = "*"
+pymongo = "*"
+jsonschema = "*"
+django = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
+djangorestframework-jwt = "*"
+djongo = "*"
+django-crontab = "*"
+django-cors-headers = "*"
+
+[dev-packages]
+pylint = "*"
+
+[requires]
+python_version = "3.6"
