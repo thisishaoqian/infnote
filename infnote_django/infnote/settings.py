@@ -26,7 +26,10 @@ SECRET_KEY = 'xpu_489k2-#5%fo8w@h0usilpdk9$^+gx&%ac_4#$($v*t8@8g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'api.infnote.com',
+]
 
 
 CORS_ORIGIN_ALLOW_ALL = False
