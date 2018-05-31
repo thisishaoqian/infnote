@@ -86,15 +86,15 @@ class PostForm extends Component {
             content: this.state.content,
             reply_to: this.props.post ? this.props.post.transaction_id : null,
         })
+        this.setState({ title: '', content: ''})
         post.submit().then(post => {
             Store.dispatch(sendPost(post))
-            this.setState({ title: '', content: ''})
         })
     }
 
     render () {
         const { classes, type } = this.props
-        const { user } = this.state
+        const { user, title, content } = this.state
         return (
             <Paper className={classNames('paper', classes.paper)}>
                 <div className={user.user_id ? classes.hidden : classes.mask}>
@@ -106,10 +106,10 @@ class PostForm extends Component {
                     <Typography className={classes.title}>Post a new {type}</Typography>
                     <FixedSpace size="sm"/>
                     <Typography className={classes.subtitle}>Title</Typography>
-                    <TextField fullWidth className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeTitle}/>
+                    <TextField fullWidth className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeTitle} value={title}/>
                     <FixedSpace size="sm"/>
                     <Typography className={classes.subtitle}>Content</Typography>
-                    <TextField fullWidth multiline rows="10" className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeContent} />
+                    <TextField fullWidth multiline rows="10" className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeContent} value={content}/>
                     <FixedSpace size="sm"/>
                     <Button fullWidth variant="raised" color="secondary" size="large" onClick={this.handleSubmit}>
                         <Typography color="primary" style={{fontWeight: 'bold'}}>Publish {type}</Typography>
