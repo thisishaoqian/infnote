@@ -8,6 +8,9 @@ import { createGenerateClassName, jssPreset } from '@material-ui/core/styles'
 
 import { LoginForm } from '../Entrance'
 import App from './App'
+import { User } from 'models'
+
+
 
 const theme = createMuiTheme({
     palette: {
@@ -41,6 +44,9 @@ jss.options.insertionPoint = 'jss-insertion-point'
 
 
 class BaseApp extends Component {
+    componentWillMount() {
+        User.recover()
+    }
     render() {
         return (
             <MuiThemeProvider theme={theme}>

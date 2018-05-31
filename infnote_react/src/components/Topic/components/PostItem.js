@@ -45,20 +45,20 @@ const styles = {
 
 class PostItem extends Component {
     render() {
-        const { classes } = this.props
+        const { classes, post } = this.props
         return (
             <div className={classes.postItem}>
                 <div className={classes.userInfo}>
                     <FixedSpace size="md"/>
                     <Avatar src={avatar_placeholder} alt="Avatar" className={classes.avatar}/>
                     <FixedSpace size="sm"/>
-                    <Typography>Vergil</Typography>
+                    <Typography>{post.public_key}</Typography>
                     <Typography>Post: 100</Typography>
                     <FixedSpace size="md"/>
                 </div>
                 <div className={classes.verticalDivider}></div>
                 <div className={classes.content}>
-                    <Typography>COOL</Typography>
+                    <Typography>{post.content}</Typography>
                     <FixedSpace size="lg"/>
                     <div>
                         <div className={classes.contentDivider}></div>

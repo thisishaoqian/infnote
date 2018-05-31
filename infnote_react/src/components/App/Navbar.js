@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
-import { AppBar, Toolbar, Button, Avatar, Typography, Grid, IconButton } from '@material-ui/core'
+import { Link, withRouter } from 'react-router-dom'
+import { AppBar, Toolbar, Avatar, Typography, Grid, IconButton, Menu, MenuItem } from '@material-ui/core'
 import logo from 'assets/infnote-logo.png'
 import avatar_placeholder from 'assets/avatar-placeholder.svg'
+
+import { User, Store } from 'models'
+import { HOME } from 'config'
 
 const styles = {
     navbar: {
@@ -23,17 +27,66 @@ const styles = {
 
 
 class Navbar extends Component {
+    state = {
+        menuAnchor: null,
+        user: User.placeholder()
+    }
+
+    componentWillMount() {
+        this.setState({ user: User.current() })
+        this.unsubscribe = Store.subscribe(() => {
+            const user = Store.getState().userEvent
+            this.setState({ user })
+        })
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
+    handleAvatarClick = event => {
+        if (this.state.user.user_id) {
+            this.setState({ menuAnchor: event.target })
+        } else {
+            this.props.history.push({ pathname: '/login', state: {from: this.props.location.pathname} })
+        }
+    }
+
+    handleMenuClose = () => {
+        this.setState({ menuAnchor: null })
+    }
+
+    handleLogout = () => {
+        this.handleMenuClose()
+        User.logout()
+    }
+
     render() {
         const { classes } = this.props
+        const { menuAnchor, user } = this.state
         return (
             <AppBar className={classes.navbar} position="static">
                 <Toolbar className={classes.toolbar}>
-                    <Button>
+                    <Link to={HOME}>
                         <img src={logo} alt="" srcSet={logo + ' 2x'} width="80"/>
-                    </Button>
+                    </Link>
                     <Grid container justify="flex-end" alignItems="center">
-                        <Typography className={classes.name}>Vergil</Typography>
-                        <IconButton><Avatar src={avatar_placeholder} /></IconButton>
+                        <Typography className={classes.name}>{ user.nickname }</Typography>
+                        <IconButton 
+                            aria-owns={menuAnchor ? 'user-menu' : null}
+                            aria-haspopup="true"
+                            onClick={this.handleAvatarClick}
+                        >
+                            <Avatar src={avatar_placeholder} />
+                        </IconButton>
+                        <Menu 
+                            id="user-menu" 
+                            anchorEl={menuAnchor} 
+                            open={Boolean(menuAnchor)} 
+                            onClose={this.handleMenuClose}
+                        >
+                            <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                        </Menu>
                     </Grid>
                 </Toolbar>
             </AppBar>
@@ -41,4 +94,4 @@ class Navbar extends Component {
     }
 }
 
-export default withStyles(styles)(Navbar)
+export default withRouter(withStyles(styles)(Navbar))

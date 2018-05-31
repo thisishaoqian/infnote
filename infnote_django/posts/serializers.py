@@ -9,6 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     post_id = ObjectIdField(source='id', read_only=True, required=False)
     date_submitted = TimestampField(read_only=True, required=False)
     date_confirmed = TimestampField(read_only=True, required=False)
+    reply_to = serializers.CharField(required=True, allow_null=True, allow_blank=False)
 
     class Meta:
         model = Post

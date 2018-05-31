@@ -10,8 +10,8 @@ class App extends Component {
             <div className="app">
                 <Navbar />
                 <FixedSpace size="xl"/>
-                <Route path="/topic/list" component={TopicListPage}/>
-                <Route exact path="/topic" component={TopicPage}/>
+                <Route exact path="/topics/" component={TopicListPage}/>
+                <Route exact path="/topic/:id" component={TopicPage}/>
             </div>
         )
     }

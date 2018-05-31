@@ -1,6 +1,8 @@
-import { APIClient } from './Networking'
+import { Store, APIClient } from '.'
+import { changeUser } from './actions'
 
 var __currentUser
+var __placeholder
 
 class User {
     static getMembers() {
@@ -8,7 +10,7 @@ class User {
     }
 
     static current() {
-        return __currentUser
+        return __currentUser ? __currentUser : this.placeholder()
     }
 
     static login(email, password) {
@@ -21,8 +23,34 @@ class User {
             })
     }
 
+    static logout() {
+        APIClient.clearToken()
+        __currentUser = null
+        Store.dispatch(changeUser(this.current()))
+    }
+
+    static recover() {
+        if (__currentUser) return true
+
+        const promise = APIClient.user()
+        if (promise) {
+            promise.then(response => {
+                const user = new User(response.data)
+                __currentUser = user
+                Store.dispatch(changeUser(user))
+                return user
+            }).catch(error => {
+                console.log(error)
+                APIClient.removeToken()
+            })
+            return true
+        }
+
+        return false
+    }
+
     constructor(props) {
-        User.getMembers().forEach(name => { this[name] = props[name] })
+        User.getMembers().forEach(name => this[name] = props[name])
 
         Object.defineProperties(this, {
             user_id: { writable: false },
@@ -33,6 +61,13 @@ class User {
         })
 
         Object.seal(this)
+    }
+
+    static placeholder() {
+        if (!__placeholder) {
+            __placeholder = new User({ nickname: 'Login' })
+        }
+        return __placeholder
     }
 }
 

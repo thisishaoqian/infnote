@@ -36,6 +36,12 @@ const styles = {
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
         zIndex: -1,
+    },
+    hidden: {
+        display: 'none',
+    },
+    errorHint: {
+        color: 'red',
     }
 }
 
@@ -46,36 +52,35 @@ class LoginForm extends Component {
         this.state = {
             email: '',
             password: '',
-            isAuthed: false,
+            isAuthed: User.current().user_id ? true : false,
+            error: null,
         }
     }
 
-    handleChangeEmail = event => this.setState({ email: event.target.value })
-    handleChangePassword = event => this.setState({ password: event.target.value })
+    handleChangeEmail = event => this.setState({ email: event.target.value, error: null })
+    handleChangePassword = event => this.setState({ password: event.target.value, error: null })
 
     handleLogin = () => {
         User.login(this.state.email, this.state.password).then(user => {
             if (user) {
                 this.setState({ isAuthed: true })
             }
+        }).catch(error => {
+            this.setState({ error })
         })
     }
 
     render() {
-        const { from } = this.props.location.state || { from: { pathname: HOME } }
         const { classes } = this.props
-        const { isAuthed } = this.state
-
-        if (isAuthed) {
-            return (
-                <Redirect to={from}/>
-            )
+        const { from } = this.props.location.state || { from: HOME }
+        if ( this.state.isAuthed ) {
+            return (<Redirect to={from}/>)
         }
 
         return (
             <Grid container className="full-width full-height" justify="center" alignItems="center">
                 <div className={classes.background}></div>
-                <Grid item xs={11} sm={8} md={5} lg={4} xl={2}>
+                <Grid item xs={11} sm={8} md={5} lg={4} xl={3}>
                     <Card>
                         <FixedSpace size="sm"/>
                         <CardContent style={{
@@ -92,6 +97,7 @@ class LoginForm extends Component {
                                 A Blockchain Based Forum
                             </Typography>
                             <FixedSpace size="sm"/>
+                            <Typography className={ this.state.error ? classes.errorHint : classes.hidden }>Wrong email address or password</Typography>
                             <div className={classes.inputCard}>
                                 <div className={classes.innerShadow}>
                                     <Grid container justify="center">
