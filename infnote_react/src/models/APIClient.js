@@ -1,11 +1,13 @@
 import axios from 'axios'
 import Cookies from 'universal-cookie'
 
+import { API_HOST } from 'config'
+
 
 class APIClient {
     constructor() {
         this.client = axios.create({
-            baseURL: 'http://localhost:8000/',
+            baseURL: API_HOST,
         })
         this.client.defaults.headers.common['Content-Type'] = 'application/json'
         this.cookies = new Cookies()
