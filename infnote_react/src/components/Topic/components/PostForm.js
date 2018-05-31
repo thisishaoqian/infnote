@@ -64,6 +64,7 @@ class PostForm extends Component {
     componentWillMount() {
         this.setState({ user: User.current() })
         this.unsubscribe = Store.subscribe(() => {
+            console.log(Store.getState())
             this.setState({ user: Store.getState().userEvent })
         })
     }

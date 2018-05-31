@@ -72,7 +72,7 @@ class ListReply(GenericAPIView):
     def get(self, _, **kwargs):
         post_id = kwargs.get('id')
         post = self.get_queryset().get(id=bson.ObjectId(post_id))
-        queryset = self.get_queryset().filter(reply_to=post.transaction_id)
+        queryset = self.get_queryset().filter(reply_to=post.transaction_id).order_by('date_submitted')
 
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
