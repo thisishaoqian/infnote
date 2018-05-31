@@ -64,7 +64,6 @@ class PostForm extends Component {
     componentWillMount() {
         this.setState({ user: User.current() })
         this.unsubscribe = Store.subscribe(() => {
-            console.log(Store.getState())
             this.setState({ user: Store.getState().userEvent })
         })
     }
@@ -89,6 +88,7 @@ class PostForm extends Component {
         })
         post.submit().then(post => {
             Store.dispatch(sendPost(post))
+            this.setState({ title: '', content: ''})
         })
     }
 
