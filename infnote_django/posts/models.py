@@ -17,20 +17,22 @@ class PostManager(models.Manager):
             transaction_id=transaction_id,
             **kwargs
         )
-        post.save()
 
         reply_to = kwargs.get('reply_to')
         if reply_to and len(reply_to) > 0:
             master = self.get(transaction_id=reply_to)
             master.replies += 1
+            post.save()
             master.save()
+        else:
+            post.save()
 
         return self.get(transaction_id=transaction_id)
 
 
 class Post(models.Model):
     id = models.ObjectIdField(db_column='_id', default=None)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True)
     content = models.CharField(max_length=20000)
 
     # 使用 URI-liked 的形式，暂时仅允许第一级目录

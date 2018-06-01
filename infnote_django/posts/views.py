@@ -21,7 +21,7 @@ class CreatePost(APIView):
             result = PostSerializer(instance=post).data
             return Response(result)
 
-        return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListPost(GenericAPIView):

@@ -7,6 +7,7 @@ import classNames from 'classnames'
 
 import { User, Post, Store } from 'models'
 import { sendPost } from 'models/actions'
+import MarkdownIcon from './MarkdownIcon'
 
 const styles = theme => {
     const colors = theme.palette
@@ -50,6 +51,9 @@ const styles = theme => {
         },
         hidden: {
             display: 'none',
+        },
+        markdownHint: {
+            color: colors.grey[600],
         }
     } 
 }
@@ -105,11 +109,18 @@ class PostForm extends Component {
                 <div className={user.user_id ? '' : classes.filter}>
                     <Typography className={classes.title}>Post a new {type}</Typography>
                     <FixedSpace size="sm"/>
-                    <Typography className={classes.subtitle}>Title</Typography>
-                    <TextField fullWidth className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeTitle} value={title}/>
-                    <FixedSpace size="sm"/>
+                    <div className={type === 'Reply' ? classes.hidden : ''}>
+                        <Typography className={classes.subtitle}>Title</Typography>
+                        <TextField fullWidth className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeTitle} value={title}/>
+                        <FixedSpace size="sm"/>
+                    </div>
                     <Typography className={classes.subtitle}>Content</Typography>
                     <TextField fullWidth multiline rows="10" className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeContent} value={content}/>
+                    <FixedSpace size="xs3"/>
+                    <Grid container >
+                        <Grid item><MarkdownIcon /></Grid>
+                        <Grid item><Typography className={classes.markdownHint}>&nbsp;&nbsp;Styling with Markdown is supported</Typography></Grid>
+                    </Grid>
                     <FixedSpace size="sm"/>
                     <Button fullWidth variant="raised" color="secondary" size="large" onClick={this.handleSubmit}>
                         <Typography color="primary" style={{fontWeight: 'bold'}}>Publish {type}</Typography>

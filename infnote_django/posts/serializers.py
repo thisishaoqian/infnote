@@ -11,6 +11,14 @@ class PostSerializer(serializers.ModelSerializer):
     date_confirmed = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=True, allow_null=True, allow_blank=False)
 
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        reply_to = attrs.get('reply_to')
+        title = attrs.get('title')
+        if (not reply_to or len(reply_to) == 0) and (not title or len(title) == 0):
+            raise serializers.ValidationError({'title': ['This field may not be blank when reply_to is blank.']})
+        return data
+
     class Meta:
         model = Post
         exclude = ('id',)
