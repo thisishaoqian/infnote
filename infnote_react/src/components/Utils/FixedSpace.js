@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 
 const fixedStyles = {
     xs4: { height: 5 },
@@ -20,7 +21,7 @@ class FixedSpace extends Component {
     render() {
         const { classes, size, className } = this.props
         return (
-            <div className={classes[size] + ' ' + className}></div>
+            <div className={classNames(classes[size], className)}></div>
         )
     }
 }

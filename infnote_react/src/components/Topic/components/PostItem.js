@@ -4,6 +4,7 @@ import { Typography, Avatar } from '@material-ui/core'
 import avatar_placeholder from 'assets/avatar-placeholder.svg'
 import { FixedSpace } from 'components/Utils'
 import ReactMarkdown from 'react-markdown'
+import classNames from 'classnames'
 
 const styles = theme => {
     return {
@@ -15,7 +16,7 @@ const styles = theme => {
             minWidth: 200,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             textAlign: 'center',
         },
         content: {
@@ -26,6 +27,7 @@ const styles = theme => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            overflow: 'scroll',
         },
         avatar: {
             width: 80,
@@ -48,6 +50,15 @@ const styles = theme => {
 
 
 class PostItem extends Component {
+    componentDidMount() {
+        const items = document
+            .getElementById(this.props.post.post_id)
+            .getElementsByTagName('pre')
+        for (let item of items) {
+            window.hljs.highlightBlock(item)
+        }
+    }
+
     render() {
         const { classes, post } = this.props
         return (
@@ -61,7 +72,7 @@ class PostItem extends Component {
                     <FixedSpace size="md"/>
                 </div>
                 <div className={classes.verticalDivider}></div>
-                <div className={classes.content}>
+                <div className={classNames(classes.content, 'full-width')} id={post.post_id}>
                     <ReactMarkdown source={post.content} className={classes.body1}/>
                     <FixedSpace size="lg"/>
                     <div>
