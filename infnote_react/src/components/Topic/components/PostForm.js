@@ -90,9 +90,9 @@ class PostForm extends Component {
             content: this.state.content,
             reply_to: this.props.post ? this.props.post.transaction_id : null,
         })
-        this.setState({ title: '', content: ''})
         post.submit().then(post => {
             Store.dispatch(sendPost(post))
+            this.setState({ title: '', content: ''})
         })
     }
 
