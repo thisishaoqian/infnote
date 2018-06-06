@@ -15,5 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ('id',)
-        read_only_fields = ('id', 'date_created', 'is_activated', 'is_confirmed')
+        read_only_fields = ('id', 'date_created', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes')
         extra_kwargs = {'password': {'write_only': True}}
+
+
+class UserBriefSerializer(UserSerializer):
+
+    class Meta(UserSerializer.Meta):
+        exclude = None
+        fields = ('user_id', 'nickname', 'topics')

@@ -8,6 +8,8 @@ import { FixedSpace } from 'components/Utils'
 
 import { Post, Store } from 'models'
 
+import { formatDate } from 'tools'
+
 const styles = theme => {
     const colors = theme.palette
     return {
@@ -113,9 +115,9 @@ class TopicList extends Component {
                                     <TableCell className={classNames(classes.titleColumn, classes.leftSpacing)}>
                                         {item.title}
                                     </TableCell>
-                                    <TableCell>{item.public_key}</TableCell>
+                                    <TableCell>{item.user.nickname}</TableCell>
                                     <TableCell>{item.replies}</TableCell>
-                                    <TableCell>Today 03:32:54 am<br />by {item.last}</TableCell>
+                                    <TableCell>{item.last_reply ? formatDate(item.last_reply.date_submitted) : formatDate(item.date_submitted)}<br />by {item.last_reply ? item.last_reply.user.nickname : item.user.nickname}</TableCell>
                                 </TableRow>
                             )
                         })}

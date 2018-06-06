@@ -17,10 +17,10 @@ class CreateUser(APIView):
     @staticmethod
     def post(request):
         data = copy.deepcopy(request.data)
-        code = data.pop('vcode', None)
-        email = data.get('email')
-        if not VerificationCode.verify(email, code):
-            return Response({'message': 'Verification code is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+        # code = data.pop('vcode', None)
+        # email = data.get('email')
+        # if not VerificationCode.verify(email, code):
+        #     return Response({'message': 'Verification code is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()

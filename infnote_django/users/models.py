@@ -64,6 +64,10 @@ class User(models.Model):
     facebook = models.CharField(max_length=50, blank=True)
     twitter = models.CharField(max_length=50, blank=True)
 
+    topics = models.IntegerField(default=0)
+    replies = models.IntegerField(default=0)
+    likes = models.IntegerField(default=0)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

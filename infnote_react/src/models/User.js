@@ -6,7 +6,7 @@ var __placeholder
 
 class User {
     static getMembers() {
-        return ['user_id','date_created','date_last_login','date_birthday','public_key','private_key','email','username','is_activated','is_confirmed','nickname','avatar','gender','location','bio','website','qq','wechat','weibo','facebook','twitter']
+        return ['user_id','date_created','date_last_login','date_birthday','public_key','private_key','email','username','is_activated','is_confirmed','nickname','avatar','gender','location','bio','website','qq','wechat','weibo','facebook','twitter', 'topics', 'replies', 'likes']
     }
 
     static current() {

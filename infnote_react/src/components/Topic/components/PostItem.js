@@ -6,6 +6,8 @@ import { FixedSpace } from 'components/Utils'
 import ReactMarkdown from 'react-markdown'
 import classNames from 'classnames'
 
+import { formatDate } from 'tools'
+
 const styles = theme => {
     return {
         postItem: {
@@ -67,8 +69,8 @@ class PostItem extends Component {
                     <FixedSpace size="md"/>
                     <Avatar src={avatar_placeholder} alt="Avatar" className={classes.avatar}/>
                     <FixedSpace size="sm"/>
-                    <Typography>{post.public_key}</Typography>
-                    <Typography>Post: 100</Typography>
+                    <Typography>{post.user.nickname}</Typography>
+                    <Typography>Post: {post.user.topics}</Typography>
                     <FixedSpace size="md"/>
                 </div>
                 <div className={classes.verticalDivider}></div>
@@ -78,7 +80,7 @@ class PostItem extends Component {
                     <div>
                         <div className={classes.contentDivider}></div>
                         <FixedSpace size="sm"/>
-                        <Typography><strong>Posted at:</strong> Today 12:34:56 am</Typography>
+                        <Typography><strong>Posted at:</strong> { formatDate(post.date_submitted) }</Typography>
                     </div>
                 </div>
             </div>

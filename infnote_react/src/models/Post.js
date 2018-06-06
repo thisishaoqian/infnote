@@ -3,7 +3,7 @@ import { APIClient } from '.'
 
 class Post {
     static getMembers() {
-        return ['post_id', 'date_submitted', 'date_confirmed', 'title', 'content', 'category', 'transaction_id', 'is_confirmed', 'block_height', 'reply_to', 'public_key', 'views', 'likes', 'replies']
+        return ['post_id', 'date_submitted', 'date_confirmed', 'title', 'content', 'category', 'transaction_id', 'is_confirmed', 'block_height', 'reply_to', 'views', 'likes', 'replies', 'user', 'base_to', 'last_reply']
     }
 
     static retreiveList() {

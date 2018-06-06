@@ -3,6 +3,26 @@ from rest_framework import serializers
 from utils.serializers import TimestampField, ObjectIdField
 
 from .models import *
+from users.serializers import User, UserBriefSerializer
+
+
+class UserField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        pass
+
+    def to_representation(self, value):
+        return UserBriefSerializer(User.objects.get(public_key=value)).data
+
+
+class LastReplyField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        pass
+
+    def to_representation(self, value):
+        if value:
+            return PostBriefSerializer(Post.objects.get(transaction_id=value)).data
+        else:
+            return None
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -10,6 +30,8 @@ class PostSerializer(serializers.ModelSerializer):
     date_submitted = TimestampField(read_only=True, required=False)
     date_confirmed = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=True, allow_null=True, allow_blank=False)
+    last_reply = LastReplyField(read_only=True)
+    user = UserField(read_only=True, source='public_key')
 
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -21,14 +43,16 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ('id',)
+        exclude = ('id', 'public_key')
         read_only_fields = (
-            'id', 'transaction_id', 'public_key',
-            'views', 'replies', 'is_confirmed', 'block_height',
+            'id', 'transaction_id', 'user',
+            'views', 'replies', 'last_reply', 'base_to',
+            'is_confirmed', 'block_height',
         )
 
 
-class ContentlessPostSerializer(PostSerializer):
+class PostBriefSerializer(PostSerializer):
 
     class Meta(PostSerializer.Meta):
-        exclude = ('id', 'content')
+        exclude = None
+        fields = ('post_id', 'title', 'date_submitted', 'last_reply', 'user', 'replies')

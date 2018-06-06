@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import *
-from .serializers import PostSerializer, ContentlessPostSerializer
+from .serializers import PostSerializer, PostBriefSerializer
 
 
 class CreatePost(APIView):
@@ -26,7 +26,7 @@ class CreatePost(APIView):
 
 class ListPost(GenericAPIView):
     queryset = Post.objects.order_by('-date_submitted')
-    serializer_class = ContentlessPostSerializer
+    serializer_class = PostBriefSerializer
 
     # TODO: 在查询数据库时排除 content 字段，以提高查询效率，减少发送的数据量
     # TODO: 需要增加 post 下的回复数量，浏览数量
