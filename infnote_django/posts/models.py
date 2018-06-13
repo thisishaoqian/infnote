@@ -5,12 +5,14 @@ from djongo import models
 from django.utils import timezone
 
 from users.models import User
+from categories.models import Category
 
 
 class PostManager(models.Manager):
     def create(self, user: User, **kwargs):
         if not isinstance(user, User):
             raise ValueError('User instance error.')
+
         transaction_id = ''.join(choices(string.ascii_letters + string.digits, k=30))
         post = self.model(
             public_key=user.public_key,
@@ -18,19 +20,30 @@ class PostManager(models.Manager):
             **kwargs
         )
 
+        category = Category.objects.get(name=post.category)
+        if not category:
+            raise ValueError('Category "' + post.category + '" is not allowed.')
+        category.posts += 1
+
         reply_to = kwargs.get('reply_to')
         if reply_to and len(reply_to) > 0:
             master = self.get(transaction_id=reply_to)
             master.replies += 1
             master.last_reply = post.transaction_id
             user.replies += 1
+            post.category = master.category
+
             post.save()
             master.save()
             user.save()
+            category.save()
         else:
             user.topics += 1
+            category.topics += 1
+
             post.save()
             user.save()
+            category.save()
 
         return self.get(transaction_id=transaction_id)
 

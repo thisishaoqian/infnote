@@ -6,8 +6,8 @@ class Post {
         return ['post_id', 'date_submitted', 'date_confirmed', 'title', 'content', 'category', 'transaction_id', 'is_confirmed', 'block_height', 'reply_to', 'views', 'likes', 'replies', 'user', 'base_to', 'last_reply']
     }
 
-    static retreiveList() {
-        return APIClient.posts().then(response => {
+    static retreiveList(category = '/', page = 1) {
+        return APIClient.posts(category, page).then(response => {
             return { 
                 count: response.data.count,
                 posts: response.data.results.map(data => new Post(data))
@@ -44,7 +44,7 @@ class Post {
         return APIClient.sendPost({
             title: this.title,
             content: this.content,
-            category: '/',
+            category: this.category,
             reply_to: this.reply_to,
         }).then(response => new Post(response.data))
     }

@@ -85,10 +85,19 @@ class PostForm extends Component {
     }
 
     handleSubmit = () => {
+        let category = null
+        if (this.props.post) {
+            category = this.props.post.category
+        } else if (this.props.category) {
+            category = this.props.category
+        } else {
+            category = '/'
+        }
         const post = new Post({
             title: this.state.title,
             content: this.state.content,
             reply_to: this.props.post ? this.props.post.transaction_id : null,
+            category: category
         })
         post.submit().then(post => {
             Store.dispatch(sendPost(post))

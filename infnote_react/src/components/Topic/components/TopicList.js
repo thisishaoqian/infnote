@@ -4,11 +4,9 @@ import { withStyles } from '@material-ui/core/styles'
 import { Redirect } from 'react-router-dom'
 import classNames from 'classnames'
 import { Paper, Typography, Table, TableBody, TableCell, TableHead, TableFooter, TablePagination, TableRow } from '@material-ui/core'
-import { FixedSpace } from 'components/Utils'
-
 import { Post, Store } from 'models'
-
 import { formatDate } from 'tools'
+
 
 const styles = theme => {
     const colors = theme.palette
@@ -36,6 +34,7 @@ const styles = theme => {
             }
         },
         tableBodyRow: {
+            cursor: 'pointer',
             '&>*': {
                 fontWeight: 600,
                 color: colors.textPrimary.main,
@@ -60,7 +59,7 @@ class TopicList extends Component {
     }
 
     reloadData = () => {
-        Post.retreiveList().then(data => {
+        Post.retreiveList(this.props.category).then(data => {
             this.setState({posts: data.posts, count: data.count})
         }).catch(error => {
             console.log(error)
@@ -97,7 +96,6 @@ class TopicList extends Component {
         }
         return (
             <Paper className="paper">
-                <FixedSpace size="xs3" className="paper-decorator"/>
                 <Typography className={classes.tableTitle}>General Discussion</Typography>
                 <Table>
                     <TableHead>

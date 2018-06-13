@@ -8,6 +8,7 @@
     "classnames": "^2.2.5",
     "faker": "^4.1.0",
     "prop-types": "^15.6.1",
+    "query-string": "^6.1.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-markdown": "^3.3.2",

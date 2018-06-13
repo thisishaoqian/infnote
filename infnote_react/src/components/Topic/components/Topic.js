@@ -46,7 +46,6 @@ class Topic extends Component {
         if (post) 
             return (
                 <Paper className="paper">
-                    <FixedSpace size="xs3" className="paper-decorator"/>
                     <Typography className={classes.header}>{post.title}</Typography>
                     <PostItem post={post}/>
                     {replies.map((item, index) => {

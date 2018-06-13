@@ -24,4 +24,5 @@ urlpatterns = [
     path('api-token-verify/', verify_jwt_token),
     path('user/', include('users.urls')),
     path('post/', include('posts.urls')),
+    path('category/', include('categories.urls')),
 ]

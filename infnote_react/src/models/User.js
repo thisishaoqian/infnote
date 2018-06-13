@@ -41,7 +41,7 @@ class User {
                 return user
             }).catch(error => {
                 console.log(error)
-                APIClient.removeToken()
+                APIClient.clearToken()
             })
             return true
         }

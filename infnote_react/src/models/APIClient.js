@@ -62,6 +62,10 @@ class APIClient {
         return this.client.post('/post/', post)
     }
 
+    categories() {
+        return this.client.get('/category/list/')
+    }
+
 }
 
 export default new APIClient()
