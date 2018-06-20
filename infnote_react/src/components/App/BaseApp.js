@@ -6,7 +6,7 @@ import JssProvider from 'react-jss/lib/JssProvider'
 import { create } from 'jss'
 import { createGenerateClassName, jssPreset } from '@material-ui/core/styles'
 
-import { LoginForm } from '../Entrance'
+import { Entrance } from '../Entrance'
 import App from './App'
 import { User } from 'models'
 
@@ -54,7 +54,7 @@ class BaseApp extends Component {
                 <JssProvider jss={jss} generateClassName={generateClassName}>
                     <Router>
                         <Switch>
-                            <Route path="/login" component={LoginForm}/>
+                            <Route path="/sign" component={Entrance}/>
                             <App />
                         </Switch>
                     </Router>

@@ -50,11 +50,11 @@ class APIClient {
         return this.client.get(url)
     }
 
-    retreivePost(id) {
+    retrievePost(id) {
         return this.client.get('/post/' + id)
     }
 
-    retreiveReplies(id, page = 1) {
+    retrieveReplies(id, page = 1) {
         return this.client.get('/post/' + id + '/replies/?page=' + page)
     }
 

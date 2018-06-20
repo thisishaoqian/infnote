@@ -6,7 +6,7 @@ class Post {
         return ['post_id', 'date_submitted', 'date_confirmed', 'title', 'content', 'category', 'transaction_id', 'is_confirmed', 'block_height', 'reply_to', 'views', 'likes', 'replies', 'user', 'base_to', 'last_reply']
     }
 
-    static retreiveList(category = '/', page = 1) {
+    static retrieveList(category = '/', page = 1) {
         return APIClient.posts(category, page).then(response => {
             return { 
                 count: response.data.count,
@@ -15,8 +15,8 @@ class Post {
         })
     }
 
-    static retreive(postId) {
-        return APIClient.retreivePost(postId).then(response => new Post(response.data))
+    static retrieve(postId) {
+        return APIClient.retrievePost(postId).then(response => new Post(response.data))
     }
 
     constructor(props) {
@@ -50,7 +50,7 @@ class Post {
     }
 
     fetchReplies() {
-        return APIClient.retreiveReplies(this.post_id).then(response => {
+        return APIClient.retrieveReplies(this.post_id).then(response => {
             return {
                 count: response.data.count,
                 posts: response.data.results.map(item => new Post(item))

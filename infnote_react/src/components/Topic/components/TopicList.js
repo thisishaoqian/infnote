@@ -59,7 +59,7 @@ class TopicList extends Component {
     }
 
     reloadData = () => {
-        Post.retreiveList(this.props.category).then(data => {
+        Post.retrieveList(this.props.category).then(data => {
             this.setState({posts: data.posts, count: data.count})
         }).catch(error => {
             console.log(error)

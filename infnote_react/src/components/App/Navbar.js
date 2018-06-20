@@ -48,7 +48,7 @@ class Navbar extends Component {
         if (this.state.user.user_id) {
             this.setState({ menuAnchor: event.target })
         } else {
-            this.props.history.push({ pathname: '/login', state: {from: this.props.location.pathname} })
+            this.props.history.push({ pathname: '/sign/in', state: {from: this.props.location.pathname} })
         }
     }
 

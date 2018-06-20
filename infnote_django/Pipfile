@@ -4,20 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
-requests = "*"
-flask-api = "*"
-uwsgi = "*"
-pymongo = "*"
-jsonschema = "*"
 django = "*"
 djangorestframework = "*"
-markdown = "*"
 django-filter = "*"
 djangorestframework-jwt = "*"
-djongo = "*"
 django-crontab = "*"
 django-cors-headers = "*"
+markdown = "*"
+pymongo = "*"
+djongo = "*"
+jsonschema = "*"
+requests = "*"
+uwsgi = "*"
 
 [dev-packages]
 pylint = "*"

@@ -16,7 +16,7 @@ class TopicPage extends Component {
     }
 
     componentWillMount() {
-        Post.retreive(this.props.match.params.id).then(post => {
+        Post.retrieve(this.props.match.params.id).then(post => {
             this.setState({ post })
         })
     }
