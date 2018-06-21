@@ -5,6 +5,8 @@
   "dependencies": {
     "@material-ui/core": "^1.0.0",
     "axios": "^0.18.0",
+    "bigi": "^1.4.2",
+    "bitcoinjs-lib": "^3.3.2",
     "classnames": "^2.2.5",
     "faker": "^4.1.0",
     "prop-types": "^15.6.1",
@@ -16,20 +18,27 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
+    "react-swipeable-views": "^0.12.14",
     "redux": "^4.0.0",
     "sprintf-js": "^1.1.1",
     "typeface-roboto": "0.0.54",
     "universal-cookie": "^2.1.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1",
-    "eslint-plugin-react": "^7.8.2"
+    "eslint-plugin-react": "^7.8.2",
+    "react-app-rewired": "^1.5.2",
+    "typeforce": "^1.12.0",
+    "uglify-es-webpack-plugin": "^0.10.0"
   }
 }

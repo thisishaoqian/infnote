@@ -25,4 +25,5 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('post/', include('posts.urls')),
     path('category/', include('categories.urls')),
+    path('wallet/', include('blockchain.urls')),
 ]

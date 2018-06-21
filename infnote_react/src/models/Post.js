@@ -1,4 +1,4 @@
-import { APIClient } from '.'
+import { APIClient, User } from '.'
 
 
 class Post {
@@ -41,12 +41,19 @@ class Post {
     }
 
     submit() {
-        return APIClient.sendPost({
+        let data = {
             title: this.title,
             content: this.content,
             category: this.category,
             reply_to: this.reply_to,
-        }).then(response => new Post(response.data))
+        }
+        return APIClient.unspent().then(response => {
+            return APIClient
+                .sendPost({
+                    data: User.current().blockchain.generateTransaction(data, response.data)
+                })
+                .then(response => new Post(response.data))
+        })
     }
 
     fetchReplies() {

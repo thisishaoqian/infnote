@@ -37,8 +37,8 @@ class User(models.Model):
     id = models.ObjectIdField(db_column='_id', default=None)
     password = models.CharField(max_length=255)
 
-    public_key = models.CharField(max_length=255, unique=True)
-    private_key = models.CharField(max_length=255)
+    public_address = models.CharField(max_length=34, unique=True)
+    private_key = models.CharField(max_length=51)
 
     email = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100, unique=True)
@@ -71,7 +71,7 @@ class User(models.Model):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'public_key']
+    REQUIRED_FIELDS = ['username', 'public_address']
 
     class Meta:
         db_table = 'infnote_users'

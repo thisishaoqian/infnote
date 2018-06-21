@@ -15,7 +15,7 @@ class PostManager(models.Manager):
 
         transaction_id = ''.join(choices(string.ascii_letters + string.digits, k=30))
         post = self.model(
-            public_key=user.public_key,
+            public_address=user.public_address,
             transaction_id=transaction_id,
             **kwargs
         )
@@ -50,7 +50,7 @@ class PostManager(models.Manager):
 
 class Post(models.Model):
     id = models.ObjectIdField(db_column='_id', default=None)
-    title = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, null=True)
     content = models.CharField(max_length=20000)
 
     # 使用 URI-liked 的形式，暂时仅允许第一级目录
@@ -72,8 +72,8 @@ class Post(models.Model):
     # TODO: 用于编辑，对应原始 post 的 transaction_id
     base_to = models.CharField(max_length=128, null=True)
 
-    # 发送者的 public key address
-    public_key = models.CharField(max_length=128)
+    # 发送者的 public address
+    public_address = models.CharField(max_length=128)
 
     # TODO: 可能需要限制为 UV 而不是 PV
     views = models.BigIntegerField(default=0)

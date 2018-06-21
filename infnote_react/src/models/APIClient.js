@@ -4,6 +4,7 @@ import Cookies from 'universal-cookie'
 import { API_HOST } from 'config'
 
 
+
 class APIClient {
     constructor() {
         this.client = axios.create({
@@ -64,6 +65,10 @@ class APIClient {
 
     categories() {
         return this.client.get('/category/list/')
+    }
+
+    unspent() {
+        return this.client.get('/wallet/unspent/')
     }
 
 }

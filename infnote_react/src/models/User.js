@@ -1,12 +1,13 @@
 import { Store, APIClient } from '.'
 import { changeUser } from './actions'
+import { Blockchain } from 'tools'
 
 var __currentUser
 var __placeholder
 
 class User {
     static getMembers() {
-        return ['user_id','date_created','date_last_login','date_birthday','public_key','private_key','email','username','is_activated','is_confirmed','nickname','avatar','gender','location','bio','website','qq','wechat','weibo','facebook','twitter', 'topics', 'replies', 'likes']
+        return ['user_id','date_created','date_last_login','date_birthday','public_address','private_key','email','username','is_activated','is_confirmed','nickname','avatar','gender','location','bio','website','qq','wechat','weibo','facebook','twitter', 'topics', 'replies', 'likes']
     }
 
     static current() {
@@ -59,6 +60,12 @@ class User {
             is_activated: { writable: false },
             is_confirmed: { writable: false },
         })
+
+        if (this.private_key) {
+            this.blockchain = new Blockchain(this.private_key)
+        } else {
+            this.blockchain = new Blockchain()
+        }
 
         Object.seal(this)
     }

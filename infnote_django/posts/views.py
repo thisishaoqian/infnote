@@ -9,15 +9,25 @@ from rest_framework import status
 from .models import *
 from .serializers import PostSerializer, PostBriefSerializer
 
+from blockchain.core import Blockchain
+
 
 class CreatePost(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @staticmethod
     def post(request):
-        serializer = PostSerializer(data=request.data)
+        if 'data' not in request.data:
+            return Response({'data': 'Request JSON should have data field.'}, status=status.HTTP_400_BAD_REQUEST)
+        raw_tx = request.data['data']
+        blockchain = Blockchain()
+        data = blockchain.decode_transaction(raw_tx)
+        serializer = PostSerializer(data=data)
         if serializer.is_valid():
             post = Post.objects.create(request.user, **serializer.validated_data)
+
+            # TODO: 考虑是否将返回的内容计入余额或者是根据 block 来刷新
+            blockchain.send_transaction(raw_tx)
             result = PostSerializer(instance=post).data
             return Response(result)
 

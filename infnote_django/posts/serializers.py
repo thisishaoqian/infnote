@@ -11,7 +11,7 @@ class UserField(serializers.RelatedField):
         pass
 
     def to_representation(self, value):
-        return UserBriefSerializer(User.objects.get(public_key=value)).data
+        return UserBriefSerializer(User.objects.get(public_address=value)).data
 
 
 class LastReplyField(serializers.RelatedField):
@@ -31,7 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
     date_confirmed = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=True, allow_null=True, allow_blank=False)
     last_reply = LastReplyField(read_only=True)
-    user = UserField(read_only=True, source='public_key')
+    user = UserField(read_only=True, source='public_address')
 
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -43,11 +43,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ('id', 'public_key')
+        exclude = ('id',)
         read_only_fields = (
             'id', 'transaction_id', 'user',
             'views', 'replies', 'last_reply', 'base_to',
-            'is_confirmed', 'block_height',
+            'is_confirmed', 'block_height', 'public_address'
         )
 
 

@@ -16,6 +16,7 @@ djongo = "*"
 jsonschema = "*"
 requests = "*"
 uwsgi = "*"
+python-bitcoinlib = "*"
 
 [dev-packages]
 pylint = "*"

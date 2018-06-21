@@ -4,6 +4,7 @@ import { TopicListPage, TopicPage } from 'components/Topic'
 import { CategoryPage } from 'components/Category'
 import { FixedSpace } from 'components/Utils'
 import Navbar from './Navbar'
+import { BlockchainTest } from '../Test'
 
 class App extends Component {
     render() {

@@ -94,7 +94,7 @@ class PostForm extends Component {
             category = '/'
         }
         const post = new Post({
-            title: this.state.title,
+            title: this.props.post ? null : this.state.title,
             content: this.state.content,
             reply_to: this.props.post ? this.props.post.transaction_id : null,
             category: category
@@ -102,6 +102,8 @@ class PostForm extends Component {
         post.submit().then(post => {
             Store.dispatch(sendPost(post))
             this.setState({ title: '', content: ''})
+        }).catch(error => {
+            alert(error)
         })
     }
 
