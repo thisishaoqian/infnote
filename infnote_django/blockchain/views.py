@@ -28,27 +28,22 @@ class GetCoin(APIView):
     def get(request):
         value = int(request.query_params.get('value', 0))
         spend = bool(request.query_params.get('spend', False))
-        if value > 0:
-            coins = []
-            amount = 0
-            queryset = Coin.objects.filter(
-                owner=request.user.public_address,
-                spendable=True,
-                frozen=False
-            ).all()
 
-            for coin in queryset:
-                if spend:
-                    coin.spending = True
-                    coin.save()
-                data = CoinSerializer(coin).data
-                # data['value'] /= 1e8
-                coins.append(data)
-                amount += coin.value
-                if amount >= value:
-                    return Response({'coins': coins, 'fee': 1e5})
-        else:
-            return Response(
-                {'value': 'Value of amount of money should greater than 0'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        coins = []
+        amount = 0
+        queryset = Coin.objects.filter(
+            owner=request.user.public_address,
+            spendable=True,
+            frozen=False
+        ).all()
+
+        for coin in queryset:
+            if spend:
+                coin.spending = True
+                coin.save()
+            data = CoinSerializer(coin).data
+            # data['value'] /= 1e8
+            coins.append(data)
+            amount += coin.value
+            if amount >= value:
+                return Response({'coins': coins, 'fee': 1e5})
