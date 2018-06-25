@@ -45,6 +45,7 @@ const styles = theme => {
         rowTitle: {
             fontWeight: 'bold',
             fontSize: '1.5em',
+            textTransform: 'capitalize',
         },
         number: {
             fontWeight: 'bold',

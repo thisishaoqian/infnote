@@ -177,5 +177,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CRONJOBS = [
-    ('* * * * *', 'utils.crons.test_job', '>> /tmp/test_job.log'),
+    ('* * * * *', 'blockchain.crons.collect_transactions', '>> /tmp/infnote_bitcoin.log'),
 ]

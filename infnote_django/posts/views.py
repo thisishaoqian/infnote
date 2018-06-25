@@ -22,6 +22,11 @@ class CreatePost(APIView):
         raw_tx = request.data['data']
         blockchain = Blockchain()
         data = blockchain.decode_transaction(raw_tx)
+        if len(data) > 0:
+            data = data[0]
+        else:
+            return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             post = Post.objects.create(request.user, **serializer.validated_data)

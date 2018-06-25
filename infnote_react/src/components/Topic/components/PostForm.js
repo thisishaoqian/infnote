@@ -114,7 +114,7 @@ class PostForm extends Component {
             <Paper className={classNames('paper', classes.paper)}>
                 <div className={user.user_id ? classes.hidden : classes.mask}>
                     <Grid container className="full-height" justify="center" alignItems="center">
-                        <Grid item><Button className={classes.loginButton} variant="raised" color="secondary" size="large" onClick={() => this.props.history.push({ pathname: '/login', state: {from: this.props.location.pathname} })}>Login</Button></Grid>
+                        <Grid item><Button className={classes.loginButton} variant="raised" color="secondary" size="large" onClick={() => this.props.history.push({ pathname: '/sign/in/', state: {from: this.props.location.pathname} })}>Login</Button></Grid>
                     </Grid>
                 </div>
                 <div className={user.user_id ? '' : classes.filter}>

@@ -16,7 +16,7 @@ class Unspent(APIView):
             return Response({
                 'txid': b2lx(unspents[0]['outpoint'].hash),
                 'amount': unspents[0]['amount'],
-                'fee': 100000,
+                'fee': 1e5,
                 'count': count
             })
         else:

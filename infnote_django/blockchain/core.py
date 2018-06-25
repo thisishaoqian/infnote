@@ -1,7 +1,7 @@
 from bitcoin.rpc import Proxy
 from bitcoin.core import CTransaction, script
 from binascii import unhexlify
-from json import loads
+import json
 
 
 class Blockchain:
@@ -14,24 +14,29 @@ class Blockchain:
 
     def decode_transaction(self, raw_tx):
         transaction = self.deserialize_transaction(raw_tx)
-        for out in transaction.vout:
-            i = iter(out.scriptPubKey)
-            flag = next(i)
-            if flag == script.OP_RETURN or flag == script.OP_NOP8:
-                data = next(i).decode('utf8')
-                return loads(data)
+        return [self.get_data_from_vout(out) for out in transaction.vout]
 
     def send_transaction(self, raw_tx):
         transaction = self.deserialize_transaction(raw_tx)
         txid = self.proxy.sendrawtransaction(transaction)
         return txid
 
+    @staticmethod
+    def get_data_from_vout(vout):
+        i = iter(vout.scriptPubKey)
+        flag = next(i)
+        if flag == script.OP_RETURN or flag == script.OP_NOP8:
+            data = next(i).decode('utf8')
+            return json.loads(data)
+
+    def get_transaction(self, txid):
+        return self.proxy.getrawtransaction(txid)
+
+    def get_block_count(self):
+        return self.proxy.getblockcount()
+
+    def get_block_hash_by_height(self, height: int):
+        return self.proxy.getblock(self.proxy.getblockhash(height))
+
     def server_unspent(self):
         return self.proxy.listunspent()
-
-
-# if __name__ == '__main__':
-#     from bitcoin.core import b2lx
-#     unspents = Blockchain().server_unspent()
-#     if len(unspents) > 0:
-#         print(unspents[0])
