@@ -7,6 +7,7 @@ class Coin(models.Model):
     vout = models.IntegerField(default=0)
     value = models.BigIntegerField(default=0)
     spendable = models.BooleanField(default=False)
+    frozen = models.BooleanField(default=False)
 
     # User.public_address
     owner = models.CharField(max_length=34)

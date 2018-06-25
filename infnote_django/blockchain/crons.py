@@ -36,6 +36,7 @@ def collect_transactions():
                     newtx.vin.append(coin_id)
                     coin = Coin.objects.get(id=coin_id)
                     coin.spendable = False
+                    coin.frozen = False
                     coin.save()
 
             for i, v in enumerate(tx.vout):

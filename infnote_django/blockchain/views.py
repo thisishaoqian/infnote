@@ -11,6 +11,7 @@ class Balance(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    # TODO: 缓存用户余额，缓存更新策略有待考虑
     @staticmethod
     def get(request):
         balance = 0
@@ -26,10 +27,20 @@ class GetCoin(APIView):
     @staticmethod
     def get(request):
         value = int(request.query_params.get('value', 0))
+        spend = bool(request.query_params.get('spend', False))
         if value > 0:
             coins = []
             amount = 0
-            for coin in Coin.objects.filter(owner=request.user.public_address, spendable=True).all():
+            queryset = Coin.objects.filter(
+                owner=request.user.public_address,
+                spendable=True,
+                frozen=False
+            ).all()
+
+            for coin in queryset:
+                if spend:
+                    coin.spending = True
+                    coin.save()
                 data = CoinSerializer(coin).data
                 # data['value'] /= 1e8
                 coins.append(data)
