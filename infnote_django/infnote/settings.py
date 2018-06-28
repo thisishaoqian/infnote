@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
+    'infnote.com',
     'api.infnote.com',
 ]
 
@@ -36,6 +37,8 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
     'localhost:8080',
+    'infnote.com',
+    'api.infnote.com',
 )
 
 # Application definition
