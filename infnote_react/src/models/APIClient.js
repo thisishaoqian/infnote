@@ -71,8 +71,8 @@ class APIClient {
         return this.client.get('/category/list/')
     }
 
-    coins(value, spend = false) {
-        return this.client.get('/wallet/coins/?value=' + value + '&spend=' + spend)
+    coins(value) {
+        return this.client.get('/wallet/coins/?value=' + value)
     }
 
 }

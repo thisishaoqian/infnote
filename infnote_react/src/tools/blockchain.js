@@ -4,7 +4,6 @@ import { crypto, script, ECPair, TransactionBuilder } from 'bitcoinjs-lib'
 import OPS from 'bitcoin-ops'
 import bigi from 'bigi'
 
-const SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
 
 class Blockchain {
     constructor(privateKey=null) {
@@ -33,14 +32,21 @@ class Blockchain {
     }
 
     // money = txid
-    generateTransaction(content, money, isInfo=false) {
+    generateTransaction(content, coins, fee, isInfo=false) {
         let opData = Buffer.from(JSON.stringify(content))
         let builder = new TransactionBuilder()
         var data = this.encode(opData, isInfo)
         builder.setVersion(2)
-        builder.addInput(money.txid, 0)  // available money
+
+        let amount = 0
+        coins.forEach(coin => {
+            builder.addInput(coin.txid, coin.vout)
+            amount += coin.value
+        })
+
         builder.addOutput(data, 0)
-        builder.addOutput(SERVER_ADDRESS, money.amount - money.fee)  // transfer to server
+        builder.addOutput(this.address, amount - fee)  // transfer to server
+
         builder.sign(0, this.keyPair)
         return builder.build().toHex()
     }

@@ -45,7 +45,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         exclude = ('id',)
         read_only_fields = (
-            'id', 'transaction_id', 'user',
+            'id', 'user',
             'views', 'replies', 'last_reply', 'base_to',
             'is_confirmed', 'block_height', 'public_address'
         )

@@ -9,7 +9,7 @@ from rest_framework import status
 from .models import *
 from .serializers import PostSerializer, PostBriefSerializer
 
-from blockchain.core import Blockchain
+from blockchain.core import Blockchain, b2lx
 
 
 class CreatePost(APIView):
@@ -21,18 +21,22 @@ class CreatePost(APIView):
             return Response({'data': 'Request JSON should have data field.'}, status=status.HTTP_400_BAD_REQUEST)
         raw_tx = request.data['data']
         blockchain = Blockchain()
-        data = blockchain.decode_transaction(raw_tx)
+        tx = blockchain.deserialize_transaction(raw_tx)
+        data = blockchain.decode_transaction(tx)
         if len(data) > 0:
             data = data[0]
         else:
             return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        data['transaction_id'] = b2lx(tx.GetTxid())
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             post = Post.objects.create(request.user, **serializer.validated_data)
 
             # TODO: 考虑是否将返回的内容计入余额或者是根据 block 来刷新
             blockchain.send_transaction(raw_tx)
+            blockchain.freeze_coins_in_tx(tx)
+
             result = PostSerializer(instance=post).data
             return Response(result)
 

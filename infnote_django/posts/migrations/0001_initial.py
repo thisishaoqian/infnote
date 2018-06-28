@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('category', models.CharField(max_length=255)),
                 ('date_submitted', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_confirmed', models.DateTimeField(default=None, null=True)),
-                ('transaction_id', models.CharField(max_length=128, null=True, unique=True)),
+                ('transaction_id', models.CharField(max_length=128, unique=True)),
                 ('is_confirmed', models.BooleanField(default=False)),
                 ('block_height', models.IntegerField(default=0)),
                 ('reply_to', models.CharField(db_index=True, max_length=128, null=True)),

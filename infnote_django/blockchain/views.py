@@ -6,6 +6,9 @@ from rest_framework import status
 from .models import Coin
 from .serializers import CoinSerializer
 
+UNIT = 1e8
+FEE = 1e5
+
 
 class Balance(APIView):
 
@@ -17,7 +20,7 @@ class Balance(APIView):
         balance = 0
         for coin in Coin.objects.filter(owner=request.user.public_address, spendable=True).all():
             balance += coin.value
-        return Response({'balance': balance, 'unit': 1e8})
+        return Response({'balance': balance, 'unit': UNIT})
 
 
 class GetCoin(APIView):
@@ -27,7 +30,6 @@ class GetCoin(APIView):
     @staticmethod
     def get(request):
         value = int(request.query_params.get('value', 0))
-        spend = bool(request.query_params.get('spend', False))
 
         coins = []
         amount = 0
@@ -35,17 +37,14 @@ class GetCoin(APIView):
             owner=request.user.public_address,
             spendable=True,
             frozen=False
-        ).all()
+        ).order_by('id').all()
 
         for coin in queryset:
-            if spend:
-                coin.spending = True
-                coin.save()
             data = CoinSerializer(coin).data
             # data['value'] /= 1e8
             coins.append(data)
             amount += coin.value
             if amount >= value:
-                return Response({'coins': coins, 'fee': 1e4})
+                return Response({'coins': coins, 'fee': FEE})
 
         return Response({'message': 'You have no coin avaliable.'}, status=status.HTTP_400_BAD_REQUEST)

@@ -17,6 +17,7 @@ jsonschema = "*"
 requests = "*"
 uwsgi = "*"
 python-bitcoinlib = "*"
+"base58" = "*"
 
 [dev-packages]
 pylint = "*"

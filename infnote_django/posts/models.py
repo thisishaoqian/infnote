@@ -1,6 +1,3 @@
-import string
-from random import choices
-
 from djongo import models
 from django.utils import timezone
 
@@ -13,10 +10,8 @@ class PostManager(models.Manager):
         if not isinstance(user, User):
             raise ValueError('User instance error.')
 
-        transaction_id = ''.join(choices(string.ascii_letters + string.digits, k=30))
         post = self.model(
             public_address=user.public_address,
-            transaction_id=transaction_id,
             **kwargs
         )
 
@@ -45,7 +40,7 @@ class PostManager(models.Manager):
             user.save()
             category.save()
 
-        return self.get(transaction_id=transaction_id)
+        return self.get(transaction_id=post.transaction_id)
 
 
 class Post(models.Model):
@@ -59,7 +54,7 @@ class Post(models.Model):
 
     date_submitted = models.DateTimeField(default=timezone.now)
     date_confirmed = models.DateTimeField(null=True, default=None)
-    transaction_id = models.CharField(max_length=128, unique=True, null=True)
+    transaction_id = models.CharField(max_length=128, unique=True)
     is_confirmed = models.BooleanField(default=False)
     block_height = models.IntegerField(default=0)
 

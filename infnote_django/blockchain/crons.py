@@ -4,18 +4,21 @@ from .serializers import BaseCoinSerializer, BaseTransactionSerializer
 from .models import *
 from .core import Blockchain
 
+from utils.logger import get_logger
+
+logger = get_logger('bitcoin')
+
 
 def collect_transactions():
     blockchain = Blockchain()
 
     count = blockchain.get_block_count()
     start = Info.objects.get(id=1)
-
-    print('Blockchain count: %d' % count)
-    print('Fetching blocks from %d' % (start.height + 1))
+    logger.info('Blockchain count: %d' % count)
+    logger.info('Fetching blocks from %d' % (start.height + 1))
 
     for height in range(start.height + 1, count + 1):
-        block = blockchain.get_block_hash_by_height(height)
+        block = blockchain.get_block_by_height(height)
         for tx in block.vtx:
             txid = b2lx(tx.GetTxid())
             txsrlzr = BaseTransactionSerializer(data={
@@ -49,6 +52,7 @@ def collect_transactions():
                         'value': v.nValue,
                         'height': height,
                         'spendable': True,
+                        'frozen': False,
                     }
                     serializer = BaseCoinSerializer(data=data)
                     if serializer.is_valid():
@@ -63,4 +67,4 @@ def collect_transactions():
     start.height = count
     start.save()
 
-    print('Successfully loaded all transactions.')
+    logger.info('Successfully loaded all transactions.')
