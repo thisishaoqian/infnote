@@ -3,6 +3,9 @@ from bitcoin.core import CTransaction, script
 from binascii import unhexlify
 import json
 
+SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
+SERVER_PRIVATE_KEY = '5K48NE3WCt6mcAQur693L7QrpvjYLJkAuTX2jkvzLAit9LkJQRk'
+
 
 class Blockchain:
     def __init__(self):
@@ -40,3 +43,6 @@ class Blockchain:
 
     def server_unspent(self):
         return self.proxy.listunspent()
+
+    def send_coin_to(self, adddress, coin):
+        pass

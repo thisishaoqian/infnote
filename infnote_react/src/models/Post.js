@@ -47,7 +47,7 @@ class Post {
             category: this.category,
             reply_to: this.reply_to,
         }
-        return APIClient.unspent().then(response => {
+        return APIClient.coins(1e5, true).then(response => {
             return APIClient
                 .sendPost({
                     data: User.current().blockchain.generateTransaction(data, response.data)

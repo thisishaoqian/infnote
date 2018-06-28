@@ -39,6 +39,10 @@ class APIClient {
         })
     }
 
+    register(user) {
+        return this.client.post('/user/create/', user)
+    }
+
     user() {
         if (this.loadToken()) {
             return this.client.get('/user/')
@@ -67,8 +71,8 @@ class APIClient {
         return this.client.get('/category/list/')
     }
 
-    unspent() {
-        return this.client.get('/wallet/unspent/')
+    coins(value, spend = false) {
+        return this.client.get('/wallet/coins/?value=' + value + '&spend=' + spend)
     }
 
 }

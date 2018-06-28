@@ -46,4 +46,6 @@ class GetCoin(APIView):
             coins.append(data)
             amount += coin.value
             if amount >= value:
-                return Response({'coins': coins, 'fee': 1e5})
+                return Response({'coins': coins, 'fee': 1e4})
+
+        return Response({'message': 'You have no coin avaliable.'}, status=status.HTTP_400_BAD_REQUEST)

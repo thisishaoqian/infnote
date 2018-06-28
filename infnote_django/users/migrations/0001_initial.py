@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', djongo.models.fields.ObjectIdField(auto_created=True, db_column='_id', default=None, primary_key=True, serialize=False)),
                 ('password', models.CharField(max_length=255)),
-                ('public_address', models.CharField(max_length=34, unique=True)),
-                ('private_key', models.CharField(max_length=51)),
+                ('public_address', models.CharField(max_length=50, unique=True)),
+                ('private_key', models.CharField(max_length=100)),
                 ('email', models.CharField(max_length=100, unique=True)),
                 ('username', models.CharField(max_length=100, unique=True)),
                 ('date_created', models.DateTimeField(default=django.utils.timezone.now)),

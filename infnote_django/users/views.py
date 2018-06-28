@@ -21,6 +21,7 @@ class CreateUser(APIView):
         # email = data.get('email')
         # if not VerificationCode.verify(email, code):
         #     return Response({'message': 'Verification code is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+        print(data)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
