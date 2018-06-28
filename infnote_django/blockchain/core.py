@@ -88,10 +88,10 @@ def send_a_coin_to(address):
         b.send_coin_to(address, c)
 
 
-def load_all_data():
+def load_all_data(start):
     b = Blockchain()
     height = b.get_block_count()
-    for i in range(height + 1):
+    for i in range(start, height + 1):
         block = b.get_block_by_height(i)
         for tx in block.vtx:
             for content in b.decode_transaction(tx):

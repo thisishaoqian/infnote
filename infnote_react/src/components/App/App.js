@@ -4,7 +4,7 @@ import { TopicListPage, TopicPage } from 'components/Topic'
 import { CategoryPage } from 'components/Category'
 import { FixedSpace } from 'components/Utils'
 import Navbar from './Navbar'
-import BlockchainTest from '../Test/BlockchainTest'
+
 
 class App extends Component {
     render() {
@@ -15,7 +15,6 @@ class App extends Component {
                 <Route exact path="/" component={CategoryPage}/>
                 <Route exact path="/topics/" component={TopicListPage}/>
                 <Route exact path="/topic/:id" component={TopicPage}/>
-                <Route exact path="/test/" component={BlockchainTest}/>
             </div>
         )
     }
