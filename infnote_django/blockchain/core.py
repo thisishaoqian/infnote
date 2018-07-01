@@ -1,10 +1,11 @@
 from bitcoin.rpc import Proxy
-from bitcoin.core import script, b2lx, lx, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction, CTransaction
+from bitcoin.core import script, b2lx, lx, CBlock, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction, CTransaction
 from bitcoin.wallet import CBitcoinAddress
 from binascii import unhexlify
 import json
 
 from .models import Coin
+from .serializers import PostSerializer
 
 SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
 SERVER_PRIVATE_KEY = '5K48NE3WCt6mcAQur693L7QrpvjYLJkAuTX2jkvzLAit9LkJQRk'
@@ -18,12 +19,13 @@ class Blockchain:
     def deserialize_transaction(raw_tx):
         return CTransaction.deserialize(unhexlify(raw_tx.encode('utf8')))
 
-    def decode_transaction(self, tx):
+    @classmethod
+    def decode_transaction(cls, tx):
         contents = []
         for out in tx.vout:
             if out.nValue > 0:
                 continue
-            data = self.get_data_from_vout(out)
+            data, flag = cls.get_data_from_vout(out)
             if data:
                 contents.append(data)
         return contents
@@ -40,8 +42,8 @@ class Blockchain:
         # TODO: 需要区分类型，以填充至不同的模型
         if flag == script.OP_RETURN or flag == script.OP_NOP8:
             data = next(i).decode('utf8')
-            return json.loads(data)
-        return None
+            return json.loads(data), flag
+        return None, None
 
     def get_transaction(self, txid):
         return self.proxy.getrawtransaction(txid)
@@ -79,7 +81,7 @@ class Blockchain:
         coin.save()
 
 
-def send_a_coin_to(address):
+def transfer_a_coin_to(address):
     # TODO: 后期应该会用到多个币拼起来，需要修改为支持多个币
     coins = Coin.objects.filter(owner=SERVER_ADDRESS, spendable=True, frozen=False).order_by('id')
     if len(coins) > 0:
@@ -88,11 +90,32 @@ def send_a_coin_to(address):
         b.send_coin_to(address, c)
 
 
-def load_all_data(start):
+def load_all_data(start, end):
     b = Blockchain()
     height = b.get_block_count()
-    for i in range(start, height + 1):
+    end = end if end and end < height else height
+    for i in range(start, end + 1):
         block = b.get_block_by_height(i)
-        for tx in block.vtx:
-            for content in b.decode_transaction(tx):
-                print(content)
+        save_tx_data(block, i)
+
+
+def save_tx_data(block, height: int):
+    for tx in block.vtx:
+        for content in Blockchain.decode_transaction(tx):
+            address = None
+            for vin in tx.vin:
+                if not vin.prevout.is_null():
+                    coin = Coin.objects.get(txid=b2lx(vin.prevout.hash), vout=vin.prevout.n)
+                    address = coin.owner
+                    break
+            content['date_confirmed'] = block.nTime
+            content['is_confirmed'] = True
+            content['transaction_id'] = b2lx(tx.GetTxid())
+            content['block_height'] = height
+            content['public_address'] = address
+
+            serializer = PostSerializer(data=content)
+            if serializer.is_valid():
+                print(serializer.data)
+            else:
+                print(serializer.errors)

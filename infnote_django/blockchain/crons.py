@@ -2,7 +2,7 @@ from bitcoin.core import b2lx
 from bitcoin.wallet import CBitcoinAddress
 from .serializers import BaseCoinSerializer, BaseTransactionSerializer
 from .models import *
-from .core import Blockchain
+from .core import Blockchain, save_tx_data
 
 from utils.logger import get_logger
 
@@ -60,9 +60,8 @@ def collect_transactions():
                     else:
                         coin = Coin.objects.get(txid=data['txid'], vout=i)
                     newtx.vout.append(coin.id)
-                # else:
-                #     print(blockchain.get_data_from_vout(v))
             newtx.save()
+        # save_tx_data(block, height)
 
     start.height = count
     start.save()

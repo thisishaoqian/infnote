@@ -12,7 +12,7 @@ from utils.permissions import IsOwnerOrReadOnly
 from .models import *
 from .serializers import UserSerializer
 
-from blockchain.core import send_a_coin_to
+from blockchain.core import transfer_a_coin_to
 
 
 class CreateUser(APIView):
@@ -27,7 +27,7 @@ class CreateUser(APIView):
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
             user = serializer.save()
-            send_a_coin_to(user.public_address)
+            transfer_a_coin_to(user.public_address)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

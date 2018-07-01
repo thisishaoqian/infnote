@@ -70,11 +70,11 @@ class SignForm extends Component {
         if (!field) {
             field = event.target.name
         }
-        // if (field === 'birthday') {
-        //     field = 'date_birthday'
-        //     let date = new Date(value)
-        //     value = date.getTime() / 1000
-        // }
+        if (field === 'birthday') {
+            field = 'date_birthday'
+            let date = new Date(value)
+            value = date.getTime() / 1000
+        }
         this.setState({[field]: value})
     }
 
