@@ -24,7 +24,7 @@ class CoinSerializer(BaseCoinSerializer):
 
 
 class PostSerializer(BasePostSerializer):
-    date_confirmed = TimestampField()
+    date_confirmed = TimestampField(required=True)
     user = None
 
     class Meta(BasePostSerializer.Meta):

@@ -19,3 +19,6 @@ def get_logger(name):
     logger.addHandler(stream_handler)
 
     return logger
+
+
+default_logger = get_logger('infnote')

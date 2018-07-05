@@ -1,17 +1,9 @@
 from rest_framework import serializers
 
 from utils.serializers import TimestampField, ObjectIdField
+from users.serializers import UserField
 
 from .models import *
-from users.serializers import User, UserBriefSerializer
-
-
-class UserField(serializers.RelatedField):
-    def to_internal_value(self, data):
-        pass
-
-    def to_representation(self, value):
-        return UserBriefSerializer(User.objects.get(public_address=value)).data
 
 
 class LastReplyField(serializers.RelatedField):

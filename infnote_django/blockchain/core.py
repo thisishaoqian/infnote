@@ -1,14 +1,18 @@
+import json
+
 from bitcoin.rpc import Proxy
-from bitcoin.core import script, b2lx, lx, CBlock, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction, CTransaction
+from bitcoin.core import script, b2lx, lx, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction, CTransaction
 from bitcoin.wallet import CBitcoinAddress
 from binascii import unhexlify
-import json
+from django.core.exceptions import ObjectDoesNotExist
+
+from posts.models import Post
+from utils.logger import default_logger as logger
 
 from .models import Coin
 from .serializers import PostSerializer
 
 SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
-SERVER_PRIVATE_KEY = '5K48NE3WCt6mcAQur693L7QrpvjYLJkAuTX2jkvzLAit9LkJQRk'
 
 
 class Blockchain:
@@ -114,8 +118,15 @@ def save_tx_data(block, height: int):
             content['block_height'] = height
             content['public_address'] = address
 
-            serializer = PostSerializer(data=content)
+            try:
+                post = Post.objects.get(transaction_id=content['transaction_id'])
+                serializer = PostSerializer(instance=post, data=content)
+            except ObjectDoesNotExist:
+                serializer = PostSerializer(data=content)
+
             if serializer.is_valid():
-                print(serializer.data)
+                serializer.save()
+                logger.info('Find post: %s', serializer.data['title'])
             else:
-                print(serializer.errors)
+                for key, value in serializer.errors.items():
+                    logger.warn('%s: %s', key, value)

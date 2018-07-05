@@ -44,7 +44,7 @@ class CreatePost(APIView):
 
 
 class ListPost(GenericAPIView):
-    queryset = Post.objects.order_by('-date_submitted')
+    queryset = Post.objects.order_by('-date_confirmed').order_by('-date_submitted')
     serializer_class = PostBriefSerializer
 
     # TODO: 在查询数据库时排除 content 字段，以提高查询效率，减少发送的数据量
@@ -52,14 +52,17 @@ class ListPost(GenericAPIView):
     def get(self, request):
         queryset = self.get_queryset()
         category = request.query_params.get('category')
+        confirmed = request.query_params.get('confirmed', None)
 
         # djongo 的 MongoDB ORM 不能连用 filter
         # 第一个后续的 filter 都会无效
+        params = {'reply_to': None}
         if category and len(category) > 0:
-            queryset = queryset.filter(reply_to=None, category=category)
-        else:
-            queryset = queryset.filter(reply_to=None)
+            params['category'] = category
+        if confirmed is not None:
+            params['is_confirmed'] = confirmed
 
+        queryset = queryset.filter(**params)
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)

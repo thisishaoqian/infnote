@@ -1,5 +1,4 @@
 import bson
-
 from datetime import datetime
 
 from rest_framework import serializers
@@ -20,4 +19,5 @@ class TimestampField(serializers.DateTimeField):
 
     def to_internal_value(self, value):
         time = datetime.utcfromtimestamp(value)
-        super(TimestampField, self).to_internal_value(str(time))
+        return super(TimestampField, self).to_internal_value(str(time))
+

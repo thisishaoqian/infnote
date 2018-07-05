@@ -4,9 +4,7 @@ from .serializers import BaseCoinSerializer, BaseTransactionSerializer
 from .models import *
 from .core import Blockchain, save_tx_data
 
-from utils.logger import get_logger
-
-logger = get_logger('bitcoin')
+from utils.logger import default_logger as logger
 
 
 def collect_transactions():
@@ -61,7 +59,7 @@ def collect_transactions():
                         coin = Coin.objects.get(txid=data['txid'], vout=i)
                     newtx.vout.append(coin.id)
             newtx.save()
-        # save_tx_data(block, height)
+        save_tx_data(block, height)
 
     start.height = count
     start.save()

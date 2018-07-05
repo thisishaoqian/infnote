@@ -80,7 +80,13 @@ class PostItem extends Component {
                     <div>
                         <div className={classes.contentDivider}></div>
                         <FixedSpace size="sm"/>
-                        <Typography><strong>Posted at:</strong> { formatDate(post.date_submitted) }</Typography>
+                        {(() => {
+                            if (post.date_confirmed) {
+                                return (<Typography><strong>Confirmed at:</strong> { formatDate(post.date_confirmed) }</Typography>)
+                            } else {
+                                return (<Typography><strong>Submitted at:</strong> { formatDate(post.date_submitted) }</Typography>)
+                            }
+                        })()}
                     </div>
                 </div>
             </div>
