@@ -18,6 +18,10 @@ class PostManager(models.Manager):
             )
         else:
             post = self.model(**kwargs)
+            try:
+                user = User.objects.get(public_address=kwargs['public_address'])
+            except ObjectDoesNotExist:
+                user = None
 
         category = Category.objects.get(name=post.category)
         if not category:
@@ -27,16 +31,19 @@ class PostManager(models.Manager):
         reply_to = kwargs.get('reply_to')
         master = None
         if reply_to and len(reply_to) > 0:
-            category.topics += 1
-            user.topics += 1
             try:
                 master = self.get(transaction_id=reply_to)
             except ObjectDoesNotExist:
                 master = None
+        else:
+            category.topics += 1
+            if user:
+                user.topics += 1
 
         if master:
             master.replies += 1
-            user.replies += 1
+            if user:
+                user.replies += 1
             master.last_reply = post.transaction_id
             post.category = master.category
             master.save()

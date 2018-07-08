@@ -24,6 +24,7 @@ class Transaction(models.Model):
     id = models.CharField(max_length=64, primary_key=True, unique=True)
     vin = models.ListField()
     vout = models.ListField()
+    height = models.BigIntegerField(default=0)
 
     class Meta:
         db_table = 'bc_tx'

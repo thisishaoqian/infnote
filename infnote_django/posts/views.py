@@ -31,11 +31,12 @@ class CreatePost(APIView):
         data['transaction_id'] = b2lx(tx.GetTxid())
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
-            post = Post.objects.create(request.user, **serializer.validated_data)
-
             # TODO: 考虑是否将返回的内容计入余额或者是根据 block 来刷新
+            # 先尝试发送 tx 如果有任何错误，就不会写入数据库了
             blockchain.send_transaction(raw_tx)
             blockchain.freeze_coins_in_tx(tx)
+
+            post = Post.objects.create(request.user, **serializer.validated_data)
 
             result = PostSerializer(instance=post).data
             return Response(result)

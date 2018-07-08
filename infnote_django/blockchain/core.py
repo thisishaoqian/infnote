@@ -69,8 +69,14 @@ class Blockchain:
             coin.save()
 
     def send_coin_to(self, address, coin: Coin):
-        txin = CMutableTxIn(COutPoint(lx(coin.txid), coin.vout))
-        txout = CMutableTxOut(coin.value - 1e5, CBitcoinAddress(address).to_scriptPubKey())
+        txid = self.send_raw_to(address, coin.txid, coin.vout, coin.value)
+        coin.frozen = True
+        coin.save()
+        return txid
+
+    def send_raw_to(self, address, txid, vout, value):
+        txin = CMutableTxIn(COutPoint(lx(txid), vout))
+        txout = CMutableTxOut(value - 1e5, CBitcoinAddress(address).to_scriptPubKey())
         tx = CMutableTransaction([txin], [txout])
         tx = self.proxy.signrawtransaction(tx)['tx']
 
@@ -80,9 +86,7 @@ class Blockchain:
         # VerifyScript(txin.scriptSig, txin_script_pubkey, tx, 0, (SCRIPT_VERIFY_P2SH,))
         # print(b2x(tx.serialize()))
 
-        self.proxy.sendrawtransaction(tx)
-        coin.frozen = True
-        coin.save()
+        return b2lx(self.proxy.sendrawtransaction(tx))
 
 
 def transfer_a_coin_to(address):
@@ -91,7 +95,7 @@ def transfer_a_coin_to(address):
     if len(coins) > 0:
         c = coins[0]
         b = Blockchain()
-        b.send_coin_to(address, c)
+        return b.send_coin_to(address, c)
 
 
 def load_all_data(start, end):

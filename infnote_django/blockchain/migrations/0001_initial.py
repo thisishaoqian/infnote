@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
                 ('id', models.CharField(max_length=64, primary_key=True, serialize=False, unique=True)),
                 ('vin', djongo.models.fields.ListField()),
                 ('vout', djongo.models.fields.ListField()),
+                ('height', models.IntegerField(default=0)),
             ],
             options={
                 'db_table': 'bc_tx',
