@@ -85,15 +85,15 @@ def collect_transactions():
     start.save()
 
     # 更新目录下的计数器
-    for category in Category.objects.all():
-        ps = Post.objects.filter(category=category.name)
-        posts = len(ps)
-        topics = 0
-        for post in ps:
-            if post.reply_to is None:
-                topics += 1
-        category.posts = posts
-        category.topics = topics
-        category.save()
+    # for category in Category.objects.all():
+    #     ps = Post.objects.filter(category=category.name)
+    #     posts = len(ps)
+    #     topics = 0
+    #     for post in ps:
+    #         if post.reply_to is None:
+    #             topics += 1
+    #     category.posts = posts
+    #     category.topics = topics
+    #     category.save()
 
     logger.info('Successfully loaded all transactions.')
