@@ -45,11 +45,14 @@ class User(models.Model):
 
     date_created = models.DateTimeField(default=timezone.now)
     date_last_login = models.DateTimeField(default=timezone.now)
-    date_confirmed = models.DateTimeField(null=True)
-
     is_activated = models.BooleanField(default=False)
-    is_confirmed = models.BooleanField(default=False)
 
+    is_confirmed = models.BooleanField(default=False)
+    date_confirmed = models.DateTimeField(null=True)
+    info_txid = models.CharField(default=None, max_length=64, null=True)
+    confirm_txid = models.CharField(default=None, max_length=64, null=True)
+
+    # Personal information
     nickname = models.CharField(max_length=100, blank=True)
     avatar = models.CharField(max_length=255, blank=True)
     gender = models.IntegerField(choices=GENDER_CHOICES, default=GENDER_UNKNOWN)
@@ -57,6 +60,7 @@ class User(models.Model):
     location = models.CharField(max_length=100, blank=True)
     bio = models.CharField(max_length=255, blank=True)
 
+    # Social information
     website = models.CharField(max_length=255, blank=True)
     qq = models.CharField(max_length=50, blank=True)
     wechat = models.CharField(max_length=50, blank=True)
@@ -64,6 +68,7 @@ class User(models.Model):
     facebook = models.CharField(max_length=50, blank=True)
     twitter = models.CharField(max_length=50, blank=True)
 
+    # Post relevant information
     topics = models.IntegerField(default=0)
     replies = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)

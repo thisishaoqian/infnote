@@ -51,6 +51,7 @@ def collect_transactions():
                     coin = Coin.objects.get(id=coin_id)
                     coin.spendable = False
                     coin.frozen = False
+                    coin.spend_txid = newtx.id
                     coin.save()
 
             # 记录每一个 tx 的输入作为 Coin
@@ -64,7 +65,7 @@ def collect_transactions():
                         'owner': str(CBitcoinAddress.from_scriptPubKey(v.scriptPubKey)),
                         'value': v.nValue,
                         'height': height,
-                        'spendable': True,
+                        'spendable': True,  # TODO: 可能需要进一步确认是否可用
                         'frozen': False,
                     }
                     serializer = BaseCoinSerializer(data=data)

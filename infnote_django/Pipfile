@@ -18,6 +18,7 @@ requests = "*"
 uwsgi = "*"
 python-bitcoinlib = "*"
 "base58" = "*"
+terminaltables = "*"
 
 [dev-packages]
 pylint = "*"

@@ -6,13 +6,12 @@ from django.core.mail import send_mail
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from utils.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from .models import *
 from .serializers import UserSerializer
 
-from blockchain.core import transfer_a_coin_to
+from blockchain.core import transfer_a_coin_to, Blockchain
 
 
 class CreateUser(APIView):
@@ -30,6 +29,21 @@ class CreateUser(APIView):
             transfer_a_coin_to(user.public_address)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateInfo(APIView):
+    @staticmethod
+    def post(request):
+        if 'data' not in request.data:
+            return Response({'data': 'Request JSON should have data field.'}, status=status.HTTP_400_BAD_REQUEST)
+        raw_tx = request.data['data']
+        blockchain = Blockchain()
+        tx = blockchain.deserialize_transaction(raw_tx)
+        data = blockchain.decode_transaction(tx)
+        if len(data) > 0:
+            data = data[0]
+        else:
+            return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Verification(APIView):
@@ -52,12 +66,12 @@ class Verification(APIView):
             return Response({'message': 'Mail service failure.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
-class UserDetail(generics.RetrieveUpdateAPIView):
+class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
