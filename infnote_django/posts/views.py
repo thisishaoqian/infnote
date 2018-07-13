@@ -24,7 +24,7 @@ class CreatePost(APIView):
         tx = blockchain.deserialize_transaction(raw_tx)
         data = blockchain.decode_transaction(tx)
         if len(data) > 0:
-            data = data[0]
+            data, _ = data[0]
         else:
             return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
 

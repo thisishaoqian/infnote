@@ -75,6 +75,9 @@ class APIClient {
         return this.client.get('/wallet/coins/?value=' + value)
     }
 
+    sendUserinfo(data) {
+        return this.client.post('/user/info/', data)
+    }
 }
 
 export default new APIClient()

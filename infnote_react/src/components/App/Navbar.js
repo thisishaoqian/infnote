@@ -61,6 +61,13 @@ class Navbar extends Component {
         User.logout()
     }
 
+    handleInfoSend = () => {
+        this.handleMenuClose()
+        User.current().submit().then(user => {
+            console.log(user)
+        })
+    }
+
     render() {
         const { classes } = this.props
         const { menuAnchor, user } = this.state
@@ -85,6 +92,7 @@ class Navbar extends Component {
                             open={Boolean(menuAnchor)} 
                             onClose={this.handleMenuClose}
                         >
+                            <MenuItem onClick={this.handleInfoSend}>Send Info</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                         </Menu>
                     </Grid>

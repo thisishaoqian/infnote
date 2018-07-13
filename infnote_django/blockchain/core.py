@@ -1,18 +1,24 @@
 import json
 
+from datetime import datetime
+from pytz import timezone
+
 from bitcoin.rpc import Proxy
 from bitcoin.core import script, b2lx, lx, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction, CTransaction
 from bitcoin.wallet import CBitcoinAddress
 from binascii import unhexlify
 from django.core.exceptions import ObjectDoesNotExist
 
+from users.models import User
 from posts.models import Post
 from utils.logger import default_logger as logger
 
 from .models import Coin
-from .serializers import PostSerializer
+from .serializers import PostSerializer, UserSerializer
 
 SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
+MONEY_UNIT = 1e8
+TX_FEE = 1e5
 
 
 class Blockchain:
@@ -23,6 +29,21 @@ class Blockchain:
     def deserialize_transaction(raw_tx):
         return CTransaction.deserialize(unhexlify(raw_tx.encode('utf8')))
 
+    @staticmethod
+    def address_in_vout(vout):
+        return str(CBitcoinAddress.from_scriptPubKey(vout.scriptPubKey))
+
+    @staticmethod
+    def address_in_vin(vin):
+        if not vin.prevout.is_null():
+            try:
+                coin = Coin.objects.get(txid=b2lx(vin.prevout.hash), vout=vin.prevout.n)
+                address = coin.owner
+                return address
+            except ObjectDoesNotExist:
+                return None
+        return None
+
     @classmethod
     def decode_transaction(cls, tx):
         contents = []
@@ -31,7 +52,9 @@ class Blockchain:
                 continue
             data, flag = cls.get_data_from_vout(out)
             if data:
-                contents.append(data)
+                contents.append((data, flag))
+            else:
+                contents.append((None, None))
         return contents
 
     def send_transaction(self, raw_tx):
@@ -72,11 +95,20 @@ class Blockchain:
         txid = self.send_raw_to(address, coin.txid, coin.vout, coin.value)
         coin.frozen = True
         coin.save()
+        Coin.objects.create(
+            txid=txid,
+            vout=0,
+            value=coin.value - TX_FEE,
+            spendable=True,
+            frozen=False,
+            confirmed=False,
+            owner=address,
+        )
         return txid
 
     def send_raw_to(self, address, txid, vout, value):
         txin = CMutableTxIn(COutPoint(lx(txid), vout))
-        txout = CMutableTxOut(value - 1e5, CBitcoinAddress(address).to_scriptPubKey())
+        txout = CMutableTxOut(value - TX_FEE, CBitcoinAddress(address).to_scriptPubKey())
         tx = CMutableTransaction([txin], [txout])
         tx = self.proxy.signrawtransaction(tx)['tx']
 
@@ -89,48 +121,114 @@ class Blockchain:
         return b2lx(self.proxy.sendrawtransaction(tx))
 
 
-def transfer_a_coin_to(address):
-    # TODO: 后期应该会用到多个币拼起来，需要修改为支持多个币
-    coins = Coin.objects.filter(owner=SERVER_ADDRESS, spendable=True, frozen=False).order_by('id')
-    if len(coins) > 0:
-        c = coins[0]
+class Tool:
+
+    @classmethod
+    def transfer_a_coin_to(cls, address):
+        # TODO: 后期应该会用到多个币拼起来，需要修改为支持多个币
+        coins = Coin.objects.filter(owner=SERVER_ADDRESS, spendable=True, frozen=False).order_by('id')
+        if len(coins) > 0:
+            c = coins[0]
+            b = Blockchain()
+            return b.send_coin_to(address, c)
+
+    @classmethod
+    def load_all_data(cls, start, end):
         b = Blockchain()
-        return b.send_coin_to(address, c)
+        height = b.get_block_count()
+        end = end if end and end < height else height
+        for i in range(start, end + 1):
+            block = b.get_block_by_height(i)
+            cls.save_tx_data(block, i)
 
+    @classmethod
+    def save_tx_data(cls, block, height: int):
+        for tx in block.vtx:
+            cls.save_post_data(tx, block.nTime, height) or \
+                cls.save_userinfo(tx) or \
+                cls.confirm_userinfo(tx, block.nTime)
 
-def load_all_data(start, end):
-    b = Blockchain()
-    height = b.get_block_count()
-    end = end if end and end < height else height
-    for i in range(start, end + 1):
-        block = b.get_block_by_height(i)
-        save_tx_data(block, i)
+    @classmethod
+    def save_userinfo(cls, tx):
+        if len(tx.vout) < 2:
+            return False
+        if Blockchain.address_in_vout(tx.vout[1]) != SERVER_ADDRESS or tx.vout[1].nValue < TX_FEE * 2:
+            return False
 
+        content, flag = Blockchain.get_data_from_vout(tx.vout[0])
+        if not content or flag != script.OP_NOP8:
+            return False
 
-def save_tx_data(block, height: int):
-    for tx in block.vtx:
-        for content in Blockchain.decode_transaction(tx):
-            address = None
-            for vin in tx.vin:
-                if not vin.prevout.is_null():
-                    coin = Coin.objects.get(txid=b2lx(vin.prevout.hash), vout=vin.prevout.n)
-                    address = coin.owner
-                    break
-            content['date_confirmed'] = block.nTime
-            content['is_confirmed'] = True
-            content['transaction_id'] = b2lx(tx.GetTxid())
-            content['block_height'] = height
-            content['public_address'] = address
+        content['date_confirmed'] = None
+        content['is_confirmed'] = False
+        content['info_txid'] = b2lx(tx.GetTxid())
+        content['confirm_txid'] = None
+        content['public_address'] = Blockchain.address_in_vin(tx.vin[0])
 
-            try:
-                post = Post.objects.get(transaction_id=content['transaction_id'])
-                serializer = PostSerializer(instance=post, data=content)
-            except ObjectDoesNotExist:
-                serializer = PostSerializer(data=content)
+        try:
+            user = User.objects.get(public_address=content['public_address'])
+            serializer = UserSerializer(instance=user, data=content, partial=True)
+        except ObjectDoesNotExist:
+            content['password'] = '123456'
+            content['private_key'] = None
+            serializer = UserSerializer(data=content)
 
-            if serializer.is_valid():
-                serializer.save()
-                logger.info('Find post: %s', serializer.data['title'])
-            else:
-                for key, value in serializer.errors.items():
-                    logger.warn('%s: %s', key, value)
+        if serializer.is_valid():
+            serializer.save()
+            logger.info('Found user: %s, %s', serializer.data['email'], serializer.data['public_address'])
+        else:
+            for key, value in serializer.errors.items():
+                logger.warn('%s: %s', key, value)
+            return False
+
+        return True
+
+    @classmethod
+    def confirm_userinfo(cls, tx, time):
+        if len(tx.vin) != 1:
+            return False
+        if Blockchain.address_in_vin(tx.vin[0]) != SERVER_ADDRESS:
+            return False
+
+        info_txid = b2lx(tx.vin[0].prevout.hash)
+        confirm_txid = b2lx(tx.GetTxid())
+        try:
+            user = User.objects.get(info_txid=info_txid)
+            user.is_confirmed = True
+            user.date_confirmed = timezone('UTC').localize(datetime.utcfromtimestamp(time))
+            user.confirm_txid = confirm_txid
+            user.save()
+        except ObjectDoesNotExist:
+            return False
+
+        logger.info('Confirmed user: %s, %s', user.email, user.public_address)
+        return True
+
+    @classmethod
+    def save_post_data(cls, tx, time, height):
+        content, flag = Blockchain.get_data_from_vout(tx.vout[0])
+        if not content or flag != script.OP_RETURN:
+            return False
+
+        content['date_confirmed'] = time
+        content['is_confirmed'] = True
+        content['transaction_id'] = b2lx(tx.GetTxid())
+        content['block_height'] = height
+        content['public_address'] = Blockchain.address_in_vin(tx.vin[0])
+
+        try:
+            post = Post.objects.get(transaction_id=content['transaction_id'])
+            serializer = PostSerializer(instance=post, data=content)
+        except ObjectDoesNotExist:
+            serializer = PostSerializer(data=content)
+
+        if serializer.is_valid():
+            serializer.save()
+            logger.info('Found post: %s', serializer.data['title'])
+        else:
+            for key, value in serializer.errors.items():
+                logger.warn('%s: %s', key, value)
+            return False
+
+        return True
+

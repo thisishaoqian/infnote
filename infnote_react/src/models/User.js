@@ -7,7 +7,11 @@ var __placeholder
 
 class User {
     static getMembers() {
-        return ['user_id','date_created','date_last_login','date_birthday','public_address','private_key','email','username','is_activated','is_confirmed','nickname','avatar','gender','location','bio','website','qq','wechat','weibo','facebook','twitter', 'topics', 'replies', 'likes']
+        return ['user_id', 'date_created', 'date_last_login', 'private_key', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes'].concat(this.getSaveableKeys())
+    }
+
+    static getSaveableKeys() {
+        return ['date_birthday', 'email', 'username', 'nickname', 'avatar', 'gender', 'location', 'bio', 'website', 'qq', 'wechat', 'weibo', 'facebook', 'twitter']
     }
 
     static current() {
@@ -75,6 +79,18 @@ class User {
             __placeholder = new User({ nickname: 'Login' })
         }
         return __placeholder
+    }
+
+    submit() {
+        let data = {}
+        User.getSaveableKeys().forEach(item => data[item] = this[item])
+        return APIClient.coins(1e5 * 3).then(response => {
+            return APIClient
+                .sendUserinfo({
+                    data: User.current().blockchain.generateTransaction(data, response.data.coins, response.data.fee, true)
+                })
+                .then(response => new User(response.data))
+        })
     }
 }
 

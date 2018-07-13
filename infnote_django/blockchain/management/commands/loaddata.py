@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from blockchain.core import load_all_data
+from blockchain.core import Tool
 
 
 class Command(BaseCommand):
@@ -9,4 +9,4 @@ class Command(BaseCommand):
         parser.add_argument('--end', type=int, default=None, help='The end height to load data.')
 
     def handle(self, *args, **options):
-        load_all_data(options['start'], options['end'])
+        Tool.load_all_data(options['start'], options['end'])

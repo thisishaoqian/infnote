@@ -4,6 +4,8 @@ import { crypto, script, ECPair, TransactionBuilder } from 'bitcoinjs-lib'
 import OPS from 'bitcoin-ops'
 import bigi from 'bigi'
 
+const SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
+
 
 class Blockchain {
     constructor(privateKey=null) {
@@ -45,7 +47,13 @@ class Blockchain {
         })
 
         builder.addOutput(data, 0)
-        builder.addOutput(this.address, amount - fee)  // transfer to server
+        
+        if (isInfo) {
+            builder.addOutput(SERVER_ADDRESS, fee * 2)
+            builder.addOutput(this.address, amount - fee * 3)
+        } else {
+            builder.addOutput(this.address, amount - fee)
+        }
 
         builder.sign(0, this.keyPair)
         return builder.build().toHex()
@@ -53,7 +61,7 @@ class Blockchain {
 
     encode(data, isInfo=false) {
         if (isInfo) {
-            return script.compile([OPS.OP_NOP8, data])  // OP_INFO: 183
+            return script.compile([OPS.OP_NOP8, data])  // OP_INFO = OP_NOP8 = 183
         }
         return script.compile([OPS.OP_RETURN, data])
     }

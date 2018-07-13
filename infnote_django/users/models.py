@@ -38,7 +38,7 @@ class User(models.Model):
     password = models.CharField(max_length=255)
 
     public_address = models.CharField(max_length=50, unique=True)
-    private_key = models.CharField(max_length=100)
+    private_key = models.CharField(max_length=100, null=True)
 
     email = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100, unique=True)

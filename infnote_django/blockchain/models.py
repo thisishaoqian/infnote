@@ -8,6 +8,7 @@ class Coin(models.Model):
     value = models.BigIntegerField(default=0)
     spendable = models.BooleanField(default=False)
     frozen = models.BooleanField(default=False)
+    is_confirmed = models.BooleanField(default=False)
     spend_txid = models.CharField(max_length=64, default=None, null=True)
 
     # User.public_address

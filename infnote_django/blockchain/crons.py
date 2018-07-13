@@ -1,12 +1,12 @@
 from bitcoin.core import b2lx
 from bitcoin.wallet import CBitcoinAddress
 from utils.logger import default_logger as logger
-from posts.models import Post
-from categories.models import Category
+# from posts.models import Post
+# from categories.models import Category
 
 from .serializers import BaseCoinSerializer, BaseTransactionSerializer
 from .models import *
-from .core import Blockchain, save_tx_data
+from .core import Blockchain, Tool, script
 
 
 def collect_transactions():
@@ -58,6 +58,7 @@ def collect_transactions():
             newtx.vout = []
             for i, v in enumerate(tx.vout):
                 # nValue 大于 0 才代表是可以使用的钱
+                _, flag = Blockchain.get_data_from_vout(v)
                 if v.nValue > 0:
                     data = {
                         'txid': txid,
@@ -65,8 +66,9 @@ def collect_transactions():
                         'owner': str(CBitcoinAddress.from_scriptPubKey(v.scriptPubKey)),
                         'value': v.nValue,
                         'height': height,
-                        'spendable': True,  # TODO: 可能需要进一步确认是否可用
+                        'spendable': flag is None,  # TODO: 可能需要进一步确认是否可用
                         'frozen': False,
+                        'is_confirmed': True,
                     }
                     serializer = BaseCoinSerializer(data=data)
                     if serializer.is_valid():
@@ -77,9 +79,14 @@ def collect_transactions():
                     newtx.vout.append(coin.id)
                 else:
                     # 占位
-                    newtx.vout.append(-1)
+                    if flag == script.OP_RETURN:
+                        newtx.vout.append(-1)
+                    elif flag == script.OP_NOP8:
+                        newtx.vout.append(-2)
+                    else:
+                        newtx.vout.append(-1000)
             newtx.save()
-        save_tx_data(block, height)
+        Tool.save_tx_data(block, height)
 
     start.height = count
     start.save()

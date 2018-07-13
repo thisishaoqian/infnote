@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('value', models.BigIntegerField(default=0)),
                 ('spendable', models.BooleanField(default=False)),
                 ('frozen', models.BooleanField(default=False)),
+                ('is_confirmed', models.BooleanField(default=False)),
                 ('owner', models.CharField(max_length=34)),
                 ('height', models.IntegerField(default=0)),
             ],

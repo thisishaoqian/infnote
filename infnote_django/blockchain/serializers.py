@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from posts.serializers import PostSerializer as BasePostSerializer, TimestampField
+from users.serializers import UserSerializer as BaseUserSerializer
 
 from .models import *
 
@@ -32,3 +33,10 @@ class PostSerializer(BasePostSerializer):
             'id', 'user',
             'views', 'replies', 'last_reply'
         )
+
+
+class UserSerializer(BaseUserSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta(BaseUserSerializer.Meta):
+        read_only_fields = ('id', 'date_created', 'is_activated', 'topics', 'replies', 'likes')
