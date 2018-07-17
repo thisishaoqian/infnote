@@ -101,7 +101,7 @@ class Blockchain:
             value=coin.value - TX_FEE,
             spendable=True,
             frozen=False,
-            confirmed=False,
+            is_confirmed=False,
             owner=address,
         )
         return txid
