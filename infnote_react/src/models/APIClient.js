@@ -72,7 +72,7 @@ class APIClient {
     }
 
     coins(value) {
-        return this.client.get('/wallet/coins/?value=' + value)
+        return this.client.get('/wallet/coins/?confirmed=0?value=' + value)
     }
 
     sendUserinfo(data) {
