@@ -40,7 +40,8 @@ class GetCoin(APIView):
     @staticmethod
     def get(request):
         value = int(request.query_params.get('value', 0))
-        confirmed = bool(request.query_params.get('confirmed', True))
+        confirmed = int(request.query_params.get('confirmed', 1))
+        confirmed = True if confirmed == 1 else False
 
         coins = []
         amount = 0
@@ -48,7 +49,7 @@ class GetCoin(APIView):
             owner=request.user.public_address,
             spendable=True,
             frozen=False,
-            is_confirmed=confirmed,
+            is_confirmed__in=(True,) if confirmed else (True, False),
         ).order_by('id').all()
 
         for coin in queryset:
