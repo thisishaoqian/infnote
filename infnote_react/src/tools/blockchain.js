@@ -55,7 +55,10 @@ class Blockchain {
             builder.addOutput(this.address, amount - fee)
         }
 
-        builder.sign(0, this.keyPair)
+        coins.forEach((_, index) => {
+            builder.sign(index, this.keyPair)
+        })
+        
         return builder.build().toHex()
     }
 
