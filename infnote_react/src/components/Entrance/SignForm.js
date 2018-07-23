@@ -3,7 +3,7 @@ import { Redirect, withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import { Card, CardContent, Typography, Button, Grid, Tabs, Tab, TextField, Select, MenuItem } from '@material-ui/core'
 import SwipeableViews from 'react-swipeable-views'
-import { FixedSpace, Line } from 'components/Utils'
+import { FixedSpace, Line, showAlert } from 'components/Utils'
 
 import { User, SignUser } from 'models'
 import { HOME } from 'config'
@@ -82,13 +82,22 @@ class SignForm extends Component {
         let sign = new SignUser(this.state)
         sign.signUp().then(() => {
             User.login(sign.email, sign.password).then(() => {
-                this.props.history.goBack()
-            })
+                User.current().submit().then(() => {
+                    this.props.history.goBack()
+                }).catch(error => showAlert('Error', error.response.data.message))
+            }).catch(error => showAlert('Error', error.response.data.message))
+        }).catch(error => {
+            if (error.response.status < 500) {
+                this.setState({ error: error.response.data })
+            } else {
+                showAlert()
+            }
         })
     }
 
     render() {
         const { classes } = this.props
+        const { error } = this.state
         const { from } = this.props.location.state || { from: HOME }
         if ( this.state.isAuthed ) {
             return (<Redirect to={from}/>)
@@ -134,6 +143,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.username ? classes.errorHint : classes.hidden }>{ error && error.username ? error.username : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Nickname</Typography>
                                     <TextField 
@@ -144,6 +154,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.nickname ? classes.errorHint : classes.hidden }>{ error && error.nickname ? error.nickname : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Email Address</Typography>
                                     <TextField 
@@ -154,6 +165,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.email ? classes.errorHint : classes.hidden }>{ error && error.email ? error.email : '' }</Typography>
                                     <FixedSpace size="xs2"/>
                                     <Grid container justify="space-between" alignItems="center">
                                         <Grid item xs={6}>
@@ -166,6 +178,7 @@ class SignForm extends Component {
                                                 onChange={this.handleFieldChange}
                                                 fullWidth
                                             />
+                                            <Typography className={ error && error.code ? classes.errorHint : classes.hidden }>{ error && error.code ? error.code : '' }</Typography>
                                         </Grid>
                                         <Grid item xs={5}><Button variant="raised" color="primary" fullWidth>Send Verification</Button></Grid>
                                     </Grid>
@@ -181,6 +194,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.password ? classes.errorHint : classes.hidden }>{ error && error.password ? error.password : '' }</Typography>
                                     <FixedSpace size="md"/>
                                     <Button variant="raised" color="primary" size="large" style={{fontWeight: 'bold'}} fullWidth onClick={() => this.handleIndexChange(null, 1)}>Next</Button>
                                 </Grid>
@@ -220,6 +234,7 @@ class SignForm extends Component {
                                                 onChange={this.handleFieldChange}
                                                 fullWidth
                                             />
+                                            <Typography className={ error && error.date_birthday ? classes.errorHint : classes.hidden }>{ error && error.date_birthday ? error.date_birthday : '' }</Typography>
                                         </Grid>
                                     </Grid>
                                     <FixedSpace size="sm"/>
@@ -232,6 +247,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.location ? classes.errorHint : classes.hidden }>{ error && error.location ? error.location : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Website</Typography>
                                     <TextField 
@@ -242,6 +258,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.website ? classes.errorHint : classes.hidden }>{ error && error.website ? error.website : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Bio</Typography>
                                     <TextField 
@@ -254,6 +271,7 @@ class SignForm extends Component {
                                         fullWidth
                                         multiline
                                     />
+                                    <Typography className={ error && error.bio ? classes.errorHint : classes.hidden }>{ error && error.bio ? error.bio : '' }</Typography>
                                     <FixedSpace size="md"/>
                                     <Button variant="raised" color="primary" size="large" style={{fontWeight: 'bold'}} fullWidth onClick={() => this.handleIndexChange(null, 2)}>Next</Button>
                                 </Grid>
@@ -269,6 +287,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.qq ? classes.errorHint : classes.hidden }>{ error && error.qq ? error.qq : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Wechat</Typography>
                                     <TextField 
@@ -279,6 +298,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.wechat ? classes.errorHint : classes.hidden }>{ error && error.wechat ? error.wechat : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Weibo</Typography>
                                     <TextField 
@@ -289,6 +309,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.weibo ? classes.errorHint : classes.hidden }>{ error && error.weibo ? error.weibo : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Facebook</Typography>
                                     <TextField 
@@ -299,6 +320,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.facebook ? classes.errorHint : classes.hidden }>{ error && error.facebook ? error.facebook : '' }</Typography>
                                     <FixedSpace size="sm"/>
                                     <Typography className={classes.label} gutterBottom>Twitter</Typography>
                                     <TextField 
@@ -309,6 +331,7 @@ class SignForm extends Component {
                                         onChange={this.handleFieldChange}
                                         fullWidth
                                     />
+                                    <Typography className={ error && error.twitter ? classes.errorHint : classes.hidden }>{ error && error.twitter ? error.twitter : '' }</Typography>
                                     <FixedSpace size="md"/>
                                     <Button variant="raised" color="primary" size="large" style={{fontWeight: 'bold'}} fullWidth onClick={this.handleSignUp}>Sign Up</Button>
                                 </Grid>

@@ -7,7 +7,10 @@ class Coin(models.Model):
     vout = models.IntegerField(default=0)
     value = models.BigIntegerField(default=0)
     spendable = models.BooleanField(default=False)
+
+    # TODO: Coin should be unfreezed somehow
     frozen = models.BooleanField(default=False)
+
     is_confirmed = models.BooleanField(default=False)
     spend_txid = models.CharField(max_length=64, default=None, null=True)
 
@@ -26,6 +29,8 @@ class Transaction(models.Model):
     id = models.CharField(max_length=64, primary_key=True, unique=True)
     vin = models.ListField()
     vout = models.ListField()
+
+    # 0 means it is not confirmed
     height = models.BigIntegerField(default=0)
 
     class Meta:

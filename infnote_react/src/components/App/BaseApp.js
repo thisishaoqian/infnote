@@ -9,6 +9,7 @@ import { createGenerateClassName, jssPreset } from '@material-ui/core/styles'
 import { Entrance } from '../Entrance'
 import App from './App'
 import { User } from 'models'
+import { Alert } from '../Utils'
 
 
 
@@ -59,6 +60,7 @@ class BaseApp extends Component {
                         </Switch>
                     </Router>
                 </JssProvider>
+                <Alert />
             </MuiThemeProvider>
         )
     }

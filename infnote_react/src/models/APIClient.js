@@ -3,6 +3,9 @@ import Cookies from 'universal-cookie'
 
 import { API_HOST } from 'config'
 
+// import { alertAction } from 'models/actions'
+// import { AlertStore } from 'models'
+
 
 
 class APIClient {
@@ -18,6 +21,16 @@ class APIClient {
             this.client.defaults.headers.common['Authorization'] = token
         }
     }
+
+    // catchError = error => {
+    //     AlertStore.dispatch(alertAction({
+    //         open: true,
+    //         title: 'Error',
+    //         content: 'error'
+    //     }))
+    //     console.log(error.response.data)
+    //     return error
+    // }
 
     clearToken() {
         this.cookies.remove('token')

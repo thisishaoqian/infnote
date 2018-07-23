@@ -7,7 +7,7 @@ var __placeholder
 
 class User {
     static getMembers() {
-        return ['user_id', 'date_created', 'date_last_login', 'private_key', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes'].concat(this.getSaveableKeys())
+        return ['user_id', 'public_address', 'date_created', 'date_last_login', 'private_key', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes'].concat(this.getSaveableKeys())
     }
 
     static getSaveableKeys() {
@@ -79,6 +79,11 @@ class User {
             __placeholder = new User({ nickname: 'Login' })
         }
         return __placeholder
+    }
+
+    getGender() {
+        if (this.gender < 0 || this.gender > 2) return 'Unknown'
+        return ['Unknown', 'Male', 'Female'][this.gender]
     }
 
     submit() {

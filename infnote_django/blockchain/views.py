@@ -50,6 +50,7 @@ class GetCoin(APIView):
             spendable=True,
             frozen=False,
             is_confirmed__in=(True,) if confirmed else (True, False),
+            value__gt=TX_FEE
         ).order_by('id').all()
 
         for coin in queryset:

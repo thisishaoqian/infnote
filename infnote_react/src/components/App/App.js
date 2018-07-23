@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom'
 import { TopicListPage, TopicPage } from 'components/Topic'
 import { CategoryPage } from 'components/Category'
 import { FixedSpace } from 'components/Utils'
+import { UserInfo } from 'components/User'
 import Navbar from './Navbar'
 
 
@@ -15,6 +16,7 @@ class App extends Component {
                 <Route exact path="/" component={CategoryPage}/>
                 <Route exact path="/topics/" component={TopicListPage}/>
                 <Route exact path="/topic/:id" component={TopicPage}/>
+                <Route exact path="/userinfo/" component={UserInfo}/>
             </div>
         )
     }

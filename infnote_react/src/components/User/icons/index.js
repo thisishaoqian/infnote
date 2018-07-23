@@ -1,0 +1,6 @@
+export { default as facebook } from './facebook.svg'
+export { default as qq } from './qq.svg'
+export { default as twitter } from './twitter.svg'
+export { default as website } from './website.svg'
+export { default as wechat } from './wechat.svg'
+export { default as weibo } from './weibo.svg'

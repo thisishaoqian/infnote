@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Redirect, withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import { Card, CardActions, CardContent, Typography, Button, Grid, TextField, Checkbox, FormControlLabel, colors } from '@material-ui/core'
-import { FixedSpace, Line } from 'components/Utils'
+import { FixedSpace, Line, showAlert } from 'components/Utils'
 
 
 import { User } from 'models'
@@ -57,12 +57,17 @@ class LoginForm extends Component {
                 this.setState({ isAuthed: true })
             }
         }).catch(error => {
-            this.setState({ error })
+            if (error.response.status < 500) {
+                this.setState({ error: error.response.data })
+            } else {
+                showAlert()
+            }
         })
     }
 
     render() {
         const { classes } = this.props
+        const { error } = this.state
         const { from } = this.props.location.state || { from: HOME }
         if ( this.state.isAuthed ) {
             return (<Redirect to={from}/>)
@@ -86,7 +91,7 @@ class LoginForm extends Component {
                             A Blockchain Based Forum
                         </Typography>
                         <FixedSpace size="sm"/>
-                        <Typography className={ this.state.error ? classes.errorHint : classes.hidden }>Wrong email address or password</Typography>
+                        <Typography className={ error && error.non_field_errors ? classes.errorHint : classes.hidden }>Wrong email address or password</Typography>
                         <div className={classes.inputCard}>
                             <div className={classes.innerShadow}>
                                 <Grid container justify="center">
@@ -101,6 +106,7 @@ class LoginForm extends Component {
                                             onChange={this.handleChangeEmail}
                                             value={this.state.email}
                                         />
+                                        <Typography className={ error && error.email ? classes.errorHint : classes.hidden }>{ error && error.email ? error.email : '' }</Typography>
                                         <FixedSpace size="xs2" />
                                     </Grid>
                                     <Grid item xs={12}><Line gutter={5} /></Grid>
@@ -115,6 +121,7 @@ class LoginForm extends Component {
                                             onChange={this.handleChangePassword}
                                             value={this.state.password}
                                         />
+                                        <Typography className={ error && error.password ? classes.errorHint : classes.hidden }>{ error && error.password ? error.password : '' }</Typography>
                                         <FixedSpace size="xs2" />
                                     </Grid>
                                 </Grid>

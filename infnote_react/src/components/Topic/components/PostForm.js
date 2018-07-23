@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Paper, TextField, Typography, Button, Grid } from '@material-ui/core'
 import { withRouter } from 'react-router-dom'
-import { FixedSpace } from 'components/Utils'
+import { FixedSpace, showAlert } from 'components/Utils'
 import classNames from 'classnames'
 
 import { User, Post, Store } from 'models'
@@ -62,7 +62,8 @@ class PostForm extends Component {
     state = {
         title: '',
         content: '',
-        user: User.placeholder()
+        user: User.placeholder(),
+        error: null
     }
 
     componentWillMount() {
@@ -103,13 +104,18 @@ class PostForm extends Component {
             Store.dispatch(sendPost(post))
             this.setState({ title: '', content: ''})
         }).catch(error => {
-            alert(error)
+            console.log(error)
+            if (error.response && error.response.status < 500) {
+                this.setState({ error: error.response.data })
+            } else {
+                showAlert()
+            }
         })
     }
 
     render () {
         const { classes, type } = this.props
-        const { user, title, content } = this.state
+        const { user, title, content, error } = this.state
         return (
             <Paper className={classNames('paper', classes.paper)}>
                 <div className={user.user_id ? classes.hidden : classes.mask}>
@@ -122,10 +128,12 @@ class PostForm extends Component {
                     <FixedSpace size="sm"/>
                     <div className={type === 'Reply' ? classes.hidden : ''}>
                         <Typography className={classes.subtitle}>Title</Typography>
+                        <Typography className={ error && error.title ? classes.errorHint : classes.hidden }>{ error && error.title ? error.title : '' }</Typography>
                         <TextField fullWidth className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeTitle} value={title}/>
                         <FixedSpace size="sm"/>
                     </div>
                     <Typography className={classes.subtitle}>Content</Typography>
+                    <Typography className={ error && error.content ? classes.errorHint : classes.hidden }>{ error && error.content ? error.content : '' }</Typography>
                     <TextField fullWidth multiline rows="10" className={classes.textField} InputProps={{disableUnderline: true}} onChange={this.handleChangeContent} value={content}/>
                     <FixedSpace size="xs3"/>
                     <Grid container >

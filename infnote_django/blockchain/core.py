@@ -13,8 +13,9 @@ from users.models import User
 from posts.models import Post
 from utils.logger import default_logger as logger
 
-from .models import Coin
-from .serializers import PostSerializer, UserSerializer
+from .models import Coin, Transaction
+from .serializers import PostSerializer, UserSerializer, BaseCoinSerializer, BaseTransactionSerializer
+
 
 SERVER_ADDRESS = '1A6csP8jrpyruyW4a9tX9Nonv4R8AviB1y'
 MONEY_UNIT = 1e8
@@ -60,6 +61,7 @@ class Blockchain:
     def send_transaction(self, raw_tx):
         transaction = self.deserialize_transaction(raw_tx)
         txid = self.proxy.sendrawtransaction(transaction)
+        self.save_tx(transaction)
         return txid
 
     @staticmethod
@@ -119,6 +121,72 @@ class Blockchain:
         # print(b2x(tx.serialize()))
 
         return b2lx(self.proxy.sendrawtransaction(tx))
+
+    @classmethod
+    def save_tx(cls, tx, height=0):
+        txid = b2lx(tx.GetTxid())
+        txsrlzr = BaseTransactionSerializer(data={
+            'id': txid,
+            'vin': [],
+            'vout': [],
+            'height': height,
+        })
+        if txsrlzr.is_valid():
+            newtx = txsrlzr.save()
+        else:
+            # 不清除数据库也可以更新
+            newtx = Transaction.objects.get(id=txid)
+
+        # 记录每一个 tx 输入
+        newtx.vin = []
+        for v in tx.vin:
+            # 如果是挖出来的矿则没有输入
+            if not v.prevout.is_null():
+                # 找到输入的 tx
+                t = Transaction.objects.get(id=b2lx(v.prevout.hash))
+                # 前 tx 的 vout 里应有对应的输出
+                coin_id = t.vout[v.prevout.n]
+                # 插入新 tx 的输入
+                newtx.vin.append(coin_id)
+                # 处理以 (txid, vout) 对应的 Coin
+                coin = Coin.objects.get(id=coin_id)
+                coin.spendable = height == 0
+                coin.frozen = height == 0
+                coin.spend_txid = newtx.id
+                coin.save()
+
+        # 记录每一个 tx 的输入作为 Coin
+        newtx.vout = []
+        for i, v in enumerate(tx.vout):
+            # nValue 大于 0 才代表是可以使用的钱
+            _, flag = cls.get_data_from_vout(v)
+            if v.nValue > 0:
+                data = {
+                    'txid': txid,
+                    'vout': i,
+                    'owner': str(CBitcoinAddress.from_scriptPubKey(v.scriptPubKey)),
+                    'value': v.nValue,
+                    'height': height,
+                    'spendable': flag is None,
+                    'frozen': False,
+                    'is_confirmed': height != 0,
+                }
+                serializer = BaseCoinSerializer(data=data)
+                if serializer.is_valid():
+                    coin = serializer.save()
+                else:
+                    # 不清除数据库也可以更新
+                    coin = Coin.objects.get(txid=data['txid'], vout=i)
+                newtx.vout.append(coin.id)
+            else:
+                # 占位
+                if flag == script.OP_RETURN:
+                    newtx.vout.append(-1)
+                elif flag == script.OP_NOP8:
+                    newtx.vout.append(-2)
+                else:
+                    newtx.vout.append(-1000)
+        newtx.save()
 
 
 class Tool:
