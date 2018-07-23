@@ -13,12 +13,12 @@ class App extends Component {
         return (
             <div className="app">
                 <Navbar />
+                <Alert />
                 <FixedSpace size="xl"/>
                 <Route exact path="/" component={CategoryPage}/>
                 <Route exact path="/topics/" component={TopicListPage}/>
                 <Route exact path="/topic/:id" component={TopicPage}/>
                 <Route exact path="/userinfo/" component={UserInfo}/>
-                <Alert />
             </div>
         )
     }

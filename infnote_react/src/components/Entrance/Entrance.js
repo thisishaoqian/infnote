@@ -5,6 +5,7 @@ import { Route } from 'react-router-dom'
 import background from 'assets/background.png'
 import LoginForm from './LoginForm'
 import SignForm from './SignForm'
+import { Alert } from '../Utils'
 
 const styles = {
     background: {
@@ -25,6 +26,7 @@ class Entrance extends Component {
         return(
             <Grid container className="full-width full-height" justify="center" alignItems="center">
                 <div className={classes.background}></div>
+                <Alert />
                 <Route path="/sign/in/" component={LoginForm}/>
                 <Route path="/sign/up/" component={SignForm}/>
             </Grid>

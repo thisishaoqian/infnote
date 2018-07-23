@@ -97,15 +97,6 @@ class Blockchain:
         txid = self.send_raw_to(address, coin.txid, coin.vout, coin.value)
         coin.frozen = True
         coin.save()
-        Coin.objects.create(
-            txid=txid,
-            vout=0,
-            value=coin.value - TX_FEE,
-            spendable=True,
-            frozen=False,
-            is_confirmed=False,
-            owner=address,
-        )
         return txid
 
     def send_raw_to(self, address, txid, vout, value):
@@ -120,7 +111,9 @@ class Blockchain:
         # VerifyScript(txin.scriptSig, txin_script_pubkey, tx, 0, (SCRIPT_VERIFY_P2SH,))
         # print(b2x(tx.serialize()))
 
-        return b2lx(self.proxy.sendrawtransaction(tx))
+        txid = b2lx(self.proxy.sendrawtransaction(tx))
+        self.save_tx(tx)
+        return txid
 
     @classmethod
     def save_tx(cls, tx, height=0):
