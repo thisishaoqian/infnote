@@ -5,6 +5,7 @@ import { CategoryPage } from 'components/Category'
 import { FixedSpace } from 'components/Utils'
 import { UserInfo } from 'components/User'
 import Navbar from './Navbar'
+import { Alert } from '../Utils'
 
 
 class App extends Component {
@@ -17,6 +18,7 @@ class App extends Component {
                 <Route exact path="/topics/" component={TopicListPage}/>
                 <Route exact path="/topic/:id" component={TopicPage}/>
                 <Route exact path="/userinfo/" component={UserInfo}/>
+                <Alert />
             </div>
         )
     }
