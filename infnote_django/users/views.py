@@ -1,5 +1,8 @@
 import copy
 import bson
+import ecdsa
+import json
+import codecs
 
 from django.core.mail import send_mail
 
@@ -14,18 +17,45 @@ from .serializers import UserSerializer
 from blockchain.core import Tool, Blockchain, b2lx, TX_FEE, SERVER_ADDRESS, script
 
 
+def to_base58(s):
+    return base58.b58encode_check(s).decode('ascii')
+
+
+def from_base58(s):
+    return base58.b58decode_check(s)
+
+
 class CreateUser(APIView):
     @staticmethod
     def post(request):
         data = copy.deepcopy(request.data)
+
         # code = data.pop('vcode', None)
         # email = data.get('email')
         # if not VerificationCode.verify(email, code):
         #     return Response({'code': 'Verification code is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
-            user = serializer.save()
-            Tool.transfer_a_coin_to(user.public_address)
+
+            user = serializer.validated_data
+            print(user)
+
+            userjson = json.loads(json.dumps(user, sort_keys=True))
+            print(userjson)
+            userjson.pop('signature')
+            userjson_hash = hashlib.sha256(json.dumps(userjson).encode('utf-8')).hexdigest()
+            print(userjson_hash)
+
+            uservk_string = user['public_key']
+            uservk_byte = from_base58(uservk_string)
+            uservk = ecdsa.VerifyingKey.from_string(uservk_byte, curve=ecdsa.SECP256k1)
+            assert uservk.verify(from_base58(user['signature']), codecs.decode(userjson_hash, 'hex'))
+
+            serializer.save()
+
+            # user = serializer.save()
+            # Tool.transfer_a_coin_to(user.public_address)
+            # print(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -105,8 +135,8 @@ class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'id'
-    permission_classes = [IsAuthenticated]
+    lookup_field = 'user_id'
+    # permission_classes = [IsAuthenticated]
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())

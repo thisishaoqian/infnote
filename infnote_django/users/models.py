@@ -1,5 +1,7 @@
 import string
 import random
+import hashlib
+import base58
 
 from datetime import datetime, timedelta
 
@@ -9,13 +11,17 @@ from django.contrib.auth.hashers import make_password, check_password
 
 
 class UserManager(models.DjongoManager):
-    def create(self, email, username, password, **kwargs):
+    def create(self, email, nickname, public_key, signature, **kwargs):
 
-        if not email or not username or not password:
-            raise ValueError('Email, username, password is all required.')
+        if not email or not nickname or not public_key or not signature:
+            raise ValueError('email, nickname, public_key, signature are all required.')
 
-        user = self.model(email=email, username=username, **kwargs)
-        user.set_password(password)
+        ripemd160 = hashlib.new('ripemd160')
+        ripemd160.update(hashlib.sha256(public_key.encode('ascii')).digest())
+        user_id = base58.b58encode_check(ripemd160.digest()).decode('ascii')
+
+        user = self.model(user_id=user_id, email=email, nickname=nickname, public_key=public_key,
+                          signature=signature, **kwargs)
         user.save()
 
         return self.get(email=email)
@@ -34,26 +40,17 @@ class User(models.Model):
         (GENDER_FEMALE, 'female'),
     )
 
-    id = models.ObjectIdField(db_column='_id', default=None)
-    password = models.CharField(max_length=255)
-
-    public_address = models.CharField(max_length=50, unique=True)
-    private_key = models.CharField(max_length=100, null=True)
-
+    #id = models.ObjectIdField(db_column='_id', default=None)
+    user_id = models.CharField(max_length=255, unique=True, primary_key=True)
+    nickname = models.CharField(max_length=100, unique=True)
+    public_key = models.CharField(max_length=255, unique=True)
+    signature = models.CharField(max_length=255, unique=True)
     email = models.CharField(max_length=100, unique=True)
-    username = models.CharField(max_length=100, unique=True)
 
     date_created = models.DateTimeField(default=timezone.now)
     date_last_login = models.DateTimeField(default=timezone.now)
-    is_activated = models.BooleanField(default=False)
-
-    is_confirmed = models.BooleanField(default=False)
-    date_confirmed = models.DateTimeField(null=True)
-    info_txid = models.CharField(default=None, max_length=64, null=True)
-    confirm_txid = models.CharField(default=None, max_length=64, null=True)
 
     # Personal information
-    nickname = models.CharField(max_length=100, blank=True)
     avatar = models.CharField(max_length=255, blank=True)
     gender = models.IntegerField(choices=GENDER_CHOICES, default=GENDER_UNKNOWN)
     date_birthday = models.DateTimeField(default=timezone.now)
@@ -76,7 +73,7 @@ class User(models.Model):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'public_address']
+    REQUIRED_FIELDS = ['nickname']
 
     class Meta:
         db_table = 'infnote_users'

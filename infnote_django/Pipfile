@@ -19,6 +19,7 @@ uwsgi = "*"
 python-bitcoinlib = "*"
 "base58" = "*"
 terminaltables = "*"
+ecdsa = "*"
 
 [dev-packages]
 pylint = "*"

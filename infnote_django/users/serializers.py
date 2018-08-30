@@ -8,15 +8,16 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     # TODO: email 等字段的 validator
-    user_id = ObjectIdField(source='id', read_only=True, required=False)
+    # mongo_id = ObjectIdField(source='user_id', read_only=True, required=False)
     date_created = TimestampField(read_only=True, required=False)
     date_last_login = TimestampField(read_only=True, required=False)
     date_birthday = TimestampField(required=False)
 
     class Meta:
         model = User
-        exclude = ('id',)
-        read_only_fields = ('id', 'date_created', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes')
+        # exclude = ('id',)
+        exclude = ()
+        read_only_fields = ('user_id', 'date_created', 'is_activated', 'is_confirmed', 'topics', 'replies', 'likes')
         extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -32,14 +33,15 @@ class UserField(serializers.RelatedField):
         pass
 
     def to_representation(self, value):
-        try:
-            user = User.objects.get(public_address=value)
-            return UserBriefSerializer(user).data
-        except ObjectDoesNotExist:
-            return {
-                'nickname': 'Anonymous',
-                'public_address': value,
-                'topics': '∞',
-                'likes': '∞',
-                'replies': '∞',
-            }
+        pass
+        # try:
+        #     user = User.objects.get(public_address=value)
+        #     return UserBriefSerializer(user).data
+        # except ObjectDoesNotExist:
+        #     return {
+        #         'nickname': 'Anonymous',
+        #         'public_address': value,
+        #         'topics': '∞',
+        #         'likes': '∞',
+        #         'replies': '∞',
+        #     }

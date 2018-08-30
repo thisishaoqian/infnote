@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'infnote.com',
     'api.infnote.com',
+    '127.0.0.1'
 ]
 
 

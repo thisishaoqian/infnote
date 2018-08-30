@@ -1,4 +1,7 @@
+import copy
 import bson
+import json
+import hashlib
 
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
@@ -13,35 +16,43 @@ from blockchain.core import Blockchain, b2lx
 
 
 class CreatePost(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
     @staticmethod
     def post(request):
-        if 'data' not in request.data:
-            return Response({'data': 'Request JSON should have data field.'}, status=status.HTTP_400_BAD_REQUEST)
-        raw_tx = request.data['data']
-        blockchain = Blockchain()
-        tx = blockchain.deserialize_transaction(raw_tx)
-        data = blockchain.decode_transaction(tx)
-        if len(data) > 0:
-            data, _ = data[0]
-        else:
-            return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        data['transaction_id'] = b2lx(tx.GetTxid())
+        data = copy.deepcopy(request.data)
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
-            # TODO: 考虑是否将返回的内容计入余额或者是根据 block 来刷新
-            # 先尝试发送 tx 如果有任何错误，就不会写入数据库了
-            blockchain.send_transaction(raw_tx)
-            blockchain.freeze_coins_in_tx(tx)
 
-            post = Post.objects.create(request.user, **serializer.validated_data)
-
+            post = Post.objects.create(**serializer.validated_data)
             result = PostSerializer(instance=post).data
             return Response(result)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # if 'data' not in request.data:
+        #     return Response({'data': 'Request JSON should have data field.'}, status=status.HTTP_400_BAD_REQUEST)
+        # raw_tx = request.data['data']
+        # blockchain = Blockchain()
+        # tx = blockchain.deserialize_transaction(raw_tx)
+        # data = blockchain.decode_transaction(tx)
+        # if len(data) > 0:
+        #     data, _ = data[0]
+        # else:
+        #     return Response({'tx': 'There is no data in it.'}, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # data['transaction_id'] = b2lx(tx.GetTxid())
+        # serializer = PostSerializer(data=data)
+        # if serializer.is_valid():
+        #     # TODO: 考虑是否将返回的内容计入余额或者是根据 block 来刷新
+        #     # 先尝试发送 tx 如果有任何错误，就不会写入数据库了
+        #     blockchain.send_transaction(raw_tx)
+        #     blockchain.freeze_coins_in_tx(tx)
+        #
+        #     post = Post.objects.create(request.user, **serializer.validated_data)
+        #
+        #     result = PostSerializer(instance=post).data
+        #     return Response(result)
+        #
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListPost(GenericAPIView):
@@ -82,8 +93,8 @@ class RetrievePost(RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.views += 1
-        instance.save()
+        # instance.views += 1
+        # instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
