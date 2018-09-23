@@ -58,11 +58,9 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # User
-    'blockchain',
     'utils',
     'users',
     'posts',
-    'categories',
 ]
 
 MIDDLEWARE = [

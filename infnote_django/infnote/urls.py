@@ -20,10 +20,8 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('api-token-auth/', obtain_jwt_token),
-    path('api-token-verify/', verify_jwt_token),
+    # path('api-token-auth/', obtain_jwt_token),
+    # path('api-token-verify/', verify_jwt_token),
     path('user/', include('users.urls')),
     path('post/', include('posts.urls')),
-    path('category/', include('categories.urls')),
-    path('wallet/', include('blockchain.urls')),
 ]

@@ -23,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
     date_confirmed = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=True, allow_null=True, allow_blank=False)
     last_reply = LastReplyField(read_only=True)
-    user = UserField(read_only=True, source='public_address')
+    user = UserField(read_only=True, source='user_id')
 
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -35,7 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ('id',)
+        exclude = ('id', 'user_id')
         read_only_fields = (
             'id', 'user',
             'views', 'replies', 'last_reply', 'base_to',
