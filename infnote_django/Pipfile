@@ -17,6 +17,7 @@ uwsgi = "*"
 base58 = "*"
 terminaltables = "*"
 ecdsa = "*"
+django-extensions = "*"
 
 [dev-packages]
 pylint = "*"

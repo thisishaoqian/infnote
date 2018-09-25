@@ -1,5 +1,3 @@
-import bson
-
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -36,7 +34,7 @@ class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'user_id'
+    lookup_field = 'id'
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
@@ -54,7 +52,7 @@ class UserDetail(generics.RetrieveAPIView):
         else:
             return None
 
-        filter_kwargs = {self.lookup_field: bson.ObjectId(user_id)}
+        filter_kwargs = {self.lookup_field: user_id}
         obj = generics.get_object_or_404(queryset, **filter_kwargs)
 
         # May raise a permission denied

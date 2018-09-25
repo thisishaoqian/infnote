@@ -9,13 +9,23 @@ class PostManager(models.Manager):
     def create(self, **kwargs):
         post = self.model(**kwargs)
         try:
-            user = User.objects.get(nickname=kwargs['user_id'])
+            user = User.objects.get(id=kwargs['user_id'])
         except ObjectDoesNotExist:
-            raise ValueError('User instance error.')
+            raise ValueError('User is not exist.')
 
         post.save()
-        if user:
+
+        if not post.reply_to:
+            user.topics += 1
             user.save()
+        else:
+            topic = self.get(payload_id=post.reply_to)
+            topic.replies += 1
+            topic.last_reply = post.payload_id
+            topic.save()
+            topic_owner = User.objects.get(id=topic.user_id)
+            topic_owner.replies += 1
+            topic_owner.save()
 
         return self.get(id=post.id)
 
@@ -27,17 +37,16 @@ class Post(models.Model):
     last_reply = models.CharField(max_length=256, null=True)
 
     # User content
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, null=True)
     content = models.CharField(max_length=20000)
-    signature = models.CharField(max_length=256)
-
-    # Server content
-    user_id = models.CharField(max_length=100)
     date_submitted = models.DateTimeField(default=timezone.now)
     reply_to = models.CharField(max_length=256, null=True, db_index=True)
+    user_id = models.CharField(max_length=100)
+
+    signature = models.CharField(max_length=256)
 
     # Chain owner info
-    payload_id = models.CharField(max_length=256)
+    payload_id = models.CharField(max_length=256, unique=True)
     date_confirmed = models.DateTimeField(null=True, default=None)
     is_confirmed = models.BooleanField(default=False)
     block_height = models.IntegerField(default=0)

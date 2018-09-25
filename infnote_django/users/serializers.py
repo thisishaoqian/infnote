@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserBriefSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
-        fields = ('user_id', 'nickname', 'topics')
+        fields = ('id', 'nickname', 'avatar', 'bio')
 
 
 class UserField(serializers.RelatedField):
@@ -48,7 +48,7 @@ class UserField(serializers.RelatedField):
         pass
 
     def to_representation(self, value):
-        pass
+        return UserBriefSerializer(instance=User.objects.get(id=value)).data
 
 
 class NonceTokenSerializer(serializers.ModelSerializer):

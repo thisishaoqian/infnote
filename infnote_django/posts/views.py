@@ -1,4 +1,3 @@
-import copy
 import bson
 
 from rest_framework.views import APIView
@@ -7,15 +6,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import *
-from .serializers import PostSerializer, PostBriefSerializer
+from .serializers import PostSerializer, PostBriefSerializer, ReplySerializer
 
 
 class CreatePost(APIView):
 
     @staticmethod
     def post(request):
-        data = copy.deepcopy(request.data)
-        serializer = PostSerializer(data=data)
+        serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             post = Post.objects.create(**serializer.validated_data)
             result = PostSerializer(instance=post).data
@@ -31,7 +29,7 @@ class ListPost(GenericAPIView):
         queryset = self.get_queryset()
         confirmed = request.query_params.get('confirmed', None)
 
-        # IMPORTANT: djongo has a query problem, it cannot support chained calls
+        # IMPORTANT: djongo has a query problem, it cannot support chained filter calls
         params = {'reply_to': None}
         if confirmed is not None:
             params['is_confirmed'] = confirmed
@@ -61,12 +59,12 @@ class RetrievePost(RetrieveAPIView):
 
 class ListReply(GenericAPIView):
     queryset = Post.objects.order_by('-date_submitted')
-    serializer_class = PostSerializer
+    serializer_class = ReplySerializer
 
     def get(self, _, **kwargs):
         post_id = kwargs.get('id')
         post = self.get_queryset().get(id=bson.ObjectId(post_id))
-        queryset = self.get_queryset().filter(reply_to=post.transaction_id).order_by('date_submitted')
+        queryset = self.get_queryset().filter(reply_to=post.payload_id).order_by('date_submitted')
 
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
