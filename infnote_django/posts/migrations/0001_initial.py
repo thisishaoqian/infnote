@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('user_id', models.CharField(max_length=100)),
                 ('date_submitted', models.DateTimeField(default=django.utils.timezone.now)),
                 ('reply_to', models.CharField(db_index=True, max_length=256, null=True)),
-                ('payload_id', models.CharField(max_length=256, unique=True)),
+                ('payload_id', models.CharField(max_length=256, unique=True, db_index=True)),
                 ('date_confirmed', models.DateTimeField(default=None, null=True)),
                 ('is_confirmed', models.BooleanField(default=False)),
                 ('block_height', models.IntegerField(default=0)),

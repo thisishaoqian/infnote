@@ -30,6 +30,22 @@ class UpdateInfo(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserInfoID(APIView):
+    @staticmethod
+    def get(_, user_id):
+        user = User.objects.get(id=user_id)
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data)
+
+
+class UserInfoPK(APIView):
+    @staticmethod
+    def get(_, public_key):
+        user = User.objects.get(public_key=public_key)
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data)
+
+
 class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()

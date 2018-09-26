@@ -39,7 +39,7 @@ class User(models.Model):
     bio = models.CharField(max_length=256, null=True)
 
     # Key
-    public_key = models.CharField(max_length=100, unique=True)
+    public_key = models.CharField(max_length=100, unique=True, db_index=True)
     signature = models.CharField(max_length=100, null=True)
 
     # Local info

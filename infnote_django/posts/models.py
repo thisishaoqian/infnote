@@ -9,7 +9,7 @@ class PostManager(models.Manager):
     def create(self, **kwargs):
         post = self.model(**kwargs)
         try:
-            user = User.objects.get(id=kwargs['user_id'])
+            user = User.objects.get(id=kwargs.get('user_id'))
         except ObjectDoesNotExist:
             raise ValueError('User is not exist.')
 
@@ -46,7 +46,7 @@ class Post(models.Model):
     signature = models.CharField(max_length=256)
 
     # Chain owner info
-    payload_id = models.CharField(max_length=256, unique=True)
+    payload_id = models.CharField(max_length=256, unique=True, db_index=True)
     date_confirmed = models.DateTimeField(null=True, default=None)
     is_confirmed = models.BooleanField(default=False)
     block_height = models.IntegerField(default=0)

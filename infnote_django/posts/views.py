@@ -15,9 +15,8 @@ class CreatePost(APIView):
     def post(request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            post = Post.objects.create(**serializer.validated_data)
-            result = PostSerializer(instance=post).data
-            return Response(result)
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -49,7 +48,7 @@ class ListPost(GenericAPIView):
 class RetrievePost(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    lookup_field = 'id'
+    lookup_field = 'payload_id'
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

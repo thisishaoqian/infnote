@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.CharField(max_length=100, primary_key=True, serialize=False, unique=True)),
                 ('nickname', models.CharField(max_length=100, unique=True)),
-                ('public_key', models.CharField(max_length=100, unique=True)),
+                ('public_key', models.CharField(max_length=100, unique=True, db_index=True)),
                 ('email', models.CharField(max_length=100, null=True)),
                 ('avatar', models.CharField(max_length=256, null=True)),
                 ('gender', models.IntegerField(choices=[(0, 'unknown'), (1, 'male'), (2, 'female')], default=0)),

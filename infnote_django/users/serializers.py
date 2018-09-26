@@ -1,6 +1,7 @@
 import json
 import re
 
+from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
 from utils.serializers import TimestampField
 from .models import User, NonceToken
@@ -24,15 +25,15 @@ class UserSerializer(serializers.ModelSerializer):
         if not re.match('[a-zA-Z0-9_-]{1,30}', user_id):
             raise serializers.ValidationError('User ID can only be combined by characters, numbers, - and _.')
 
-        public_key = attrs.get('public_key')
-        signature = attrs.get('signature')
         data = dict(attrs)
-        del data['public_key']
-        del data['signature']
+        public_key = data.pop('public_key')
+        signature = data.pop('signature')
         key = Key(public_key)
-        json_data = json.JSONEncoder(separators=(',', ':'), sort_keys=True).encode(data)
-        if not key.verify(signature, json_data):
-            raise serializers.ValidationError('Signature is not valid.')
+        json_data = json.JSONEncoder(separators=(',', ':'), sort_keys=True, ensure_ascii=False).encode(data)
+        try:
+            key.verify(signature, json_data)
+        except BadSignatureError:
+            raise serializers.ValidationError('Invalid signature.')
 
         return attrs
 
