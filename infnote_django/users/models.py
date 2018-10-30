@@ -47,6 +47,10 @@ class User(models.Model):
     replies = models.IntegerField(default=0)
     date_created = models.DateTimeField(default=timezone.now)
 
+    # Blockchain
+    block_height = models.IntegerField(default=0)
+    block_time = models.DateTimeField(null=True, default=None)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'id'
@@ -75,23 +79,3 @@ class User(models.Model):
 
     def __str__(self):
         return self.nickname + ' : ' + self.email
-
-
-class NonceTokenManager(models.DjongoManager):
-    def create(self, public_key):
-        token = self.model(
-            nonce=''.join(random.choices(string.ascii_letters + string.digits, k=30)),
-            public_key=public_key,
-            date_expired=timezone.now() + timezone.timedelta(minutes=10)
-        )
-        token.save()
-        return token
-
-
-class NonceToken(models.Model):
-    id = models.ObjectIdField(db_column='_id')
-    nonce = models.CharField(max_length=100)
-    public_key = models.CharField(max_length=256)
-    date_expired = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=10))
-
-    objects = NonceTokenManager()

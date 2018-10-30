@@ -47,8 +47,7 @@ class Post(models.Model):
 
     # Chain owner info
     payload_id = models.CharField(max_length=256, unique=True, db_index=True)
-    date_confirmed = models.DateTimeField(null=True, default=None)
-    is_confirmed = models.BooleanField(default=False)
+    block_time = models.DateTimeField(null=True, default=None)
     block_height = models.IntegerField(default=0)
 
     objects = PostManager()

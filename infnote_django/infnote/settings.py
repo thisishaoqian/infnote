@@ -182,3 +182,8 @@ STATIC_URL = '/static/'
 CRONJOBS = [
     ('*/3 * * * *', 'blockchain.crons.collect_transactions'),
 ]
+
+
+# Blockchain Settings
+POST_CHAIN_ID = ''
+USER_CHAIN_ID = ''

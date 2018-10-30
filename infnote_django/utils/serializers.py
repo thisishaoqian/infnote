@@ -21,3 +21,9 @@ class TimestampField(serializers.DateTimeField):
         time = datetime.utcfromtimestamp(value)
         return super(TimestampField, self).to_internal_value(str(time))
 
+
+class TruncatedField(serializers.CharField):
+    def to_representation(self, value):
+        if len(value) > 200:
+            return value[:200]
+        return value

@@ -5,7 +5,7 @@ import base58
 from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
 
-from utils.serializers import TimestampField, ObjectIdField
+from utils.serializers import TimestampField, TruncatedField
 from utils.signature import Key
 from users.serializers import UserField
 
@@ -26,7 +26,7 @@ class LastReplyField(serializers.RelatedField):
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='payload_id', read_only=True)
     date_submitted = TimestampField(required=True)
-    date_confirmed = TimestampField(read_only=True, required=False)
+    block_time = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=False, allow_null=True, allow_blank=False)
     last_reply = LastReplyField(read_only=True)
     user = UserField(read_only=True, source='user_id')
@@ -35,8 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         exclude = ('payload_id',)
         read_only_fields = (
-            'id', 'replies', 'last_reply',
-            'is_confirmed', 'block_height', 'payload_id'
+            'id', 'replies', 'last_reply', 'block_height', 'block_time', 'payload_id'
         )
         extra_kwargs = {'user_id': {'write_only': True}}
 
@@ -61,10 +60,17 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostBriefSerializer(PostSerializer):
+    content = TruncatedField()
 
     class Meta(PostSerializer.Meta):
         exclude = None
-        fields = ('id', 'title', 'date_submitted', 'last_reply', 'user', 'replies')
+        fields = ('id', 'title', 'date_submitted', 'last_reply', 'user', 'replies', 'content')
+
+
+class PostBlockchainSerializer(PostSerializer):
+    class Meta(PostSerializer.Meta):
+        exclude = None
+        fields = ('id', 'title', 'date_submitted', 'user_id', 'content', 'reply_to', 'signature')
 
 
 class ReplySerializer(PostSerializer):

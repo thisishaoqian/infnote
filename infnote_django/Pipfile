@@ -18,6 +18,8 @@ base58 = "*"
 terminaltables = "*"
 ecdsa = "*"
 django-extensions = "*"
+googleapis-common-protos = "*"
+grpcio = "*"
 
 [dev-packages]
 pylint = "*"

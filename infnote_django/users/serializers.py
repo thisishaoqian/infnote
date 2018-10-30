@@ -4,15 +4,13 @@ import re
 from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
 from utils.serializers import TimestampField
-from .models import User, NonceToken
+from .models import User
 
 from utils.signature import Key
 
 
 class UserSerializer(serializers.ModelSerializer):
     date_created = TimestampField(read_only=True, required=False)
-    date_last_login = TimestampField(read_only=True, required=False)
-    date_birthday = TimestampField(required=False)
     signature = serializers.CharField()
 
     class Meta:
@@ -44,18 +42,14 @@ class UserBriefSerializer(UserSerializer):
         fields = ('id', 'nickname', 'avatar', 'bio')
 
 
+class UserBlockchainSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = ('id', 'nickname', 'avatar', 'bio', 'date_created', 'signature', 'public_key', 'gender')
+
+
 class UserField(serializers.RelatedField):
     def to_internal_value(self, data):
         pass
 
     def to_representation(self, value):
         return UserBriefSerializer(instance=User.objects.get(id=value)).data
-
-
-class NonceTokenSerializer(serializers.ModelSerializer):
-    date_expired = TimestampField(read_only=True)
-
-    class Meta:
-        model = NonceToken
-        exclude = ('id',)
-        editable = False
