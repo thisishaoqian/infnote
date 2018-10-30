@@ -7,12 +7,13 @@ from posts.models import Post
 from posts.serializers import PostBlockchainSerializer
 from users.models import User
 from users.serializers import UserBlockchainSerializer
+from utils.singleton import Singleton
 
 from .codegen.manage_server_pb2 import Payload
 from .codegen.manage_server_pb2_grpc import BlockchainStub
 
 
-class Client:
+class Client(metaclass=Singleton):
     def __init__(self):
         self.post_chain = settings.POST_CHAIN_ID
         self.user_chain = settings.USER_CHAIN_ID
