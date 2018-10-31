@@ -51,7 +51,7 @@ class PostSerializer(serializers.ModelSerializer):
         key = Key(user.public_key)
         json_data = json.JSONEncoder(separators=(',', ':'), sort_keys=True, ensure_ascii=False).encode(data)
         try:
-            key.verify(signature, json_data)
+            key.verify(signature, json_data.encode('utf8'))
         except BadSignatureError:
             raise serializers.ValidationError('Invalid signature.')
 
@@ -71,6 +71,7 @@ class PostBlockchainSerializer(PostSerializer):
     class Meta(PostSerializer.Meta):
         exclude = None
         fields = ('id', 'title', 'date_submitted', 'user_id', 'content', 'reply_to', 'signature')
+        extra_kwargs = {}
 
 
 class ReplySerializer(PostSerializer):

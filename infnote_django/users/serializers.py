@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         key = Key(public_key)
         json_data = json.JSONEncoder(separators=(',', ':'), sort_keys=True, ensure_ascii=False).encode(data)
         try:
-            key.verify(signature, json_data)
+            key.verify(signature, json_data.encode('utf8'))
         except BadSignatureError:
             raise serializers.ValidationError('Invalid signature.')
 
