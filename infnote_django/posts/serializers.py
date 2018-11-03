@@ -77,6 +77,5 @@ class PostBlockchainSerializer(PostSerializer):
 class ReplySerializer(PostSerializer):
     class Meta(PostSerializer.Meta):
         exclude = None
-        fields = ('id', 'date_submitted', 'date_confirmed',
-                  'user', 'content',
-                  'is_confirmed', 'signature', 'block_height')
+        fields = ('id', 'date_submitted', 'block_time',
+                  'user', 'content', 'signature', 'block_height')

@@ -23,17 +23,21 @@ class CreatePost(APIView):
 
 
 class ListPost(GenericAPIView):
-    queryset = Post.objects.order_by('-date_confirmed').order_by('-date_submitted')
+    queryset = Post.objects.order_by('-block_time').order_by('-date_submitted')
     serializer_class = PostBriefSerializer
 
     def get(self, request):
         queryset = self.get_queryset()
         confirmed = request.query_params.get('confirmed', None)
+        user_id = request.query_params.get('user', None)
 
         # IMPORTANT: djongo has a query problem, it cannot support chained filter calls
         params = {'reply_to': None}
         if confirmed is not None:
-            params['is_confirmed'] = confirmed
+            params['block_time'] = {'$ne': None}
+
+        if user_id is not None:
+            params['user_id'] = user_id
 
         queryset = queryset.filter(**params)
         queryset = self.filter_queryset(queryset)
@@ -63,8 +67,8 @@ class ListReply(GenericAPIView):
     serializer_class = ReplySerializer
 
     def get(self, _, **kwargs):
-        post_id = kwargs.get('id')
-        post = self.get_queryset().get(id=bson.ObjectId(post_id))
+        post_id = kwargs.get('payload_id')
+        post = self.get_queryset().get(payload_id=post_id)
         queryset = self.get_queryset().filter(reply_to=post.payload_id).order_by('date_submitted')
 
         queryset = self.filter_queryset(queryset)
