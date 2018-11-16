@@ -1,8 +1,4 @@
-import random
-import string
-
 from djongo import models
-from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 
 
@@ -45,11 +41,11 @@ class User(models.Model):
     # Local info
     topics = models.IntegerField(default=0)
     replies = models.IntegerField(default=0)
-    date_created = models.DateTimeField(default=timezone.now)
+    date_created = models.IntegerField(default=0)
 
     # Blockchain
     block_height = models.IntegerField(default=0)
-    block_time = models.DateTimeField(null=True, default=None)
+    block_time = models.IntegerField(default=0)
 
     objects = UserManager()
 

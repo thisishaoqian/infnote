@@ -19,7 +19,10 @@ class PostManager(models.Manager):
             user.topics += 1
             user.save()
         else:
-            topic = self.get(payload_id=post.reply_to)
+            try:
+                topic = self.get(payload_id=post.reply_to)
+            except ObjectDoesNotExist:
+                return self.get(id=post.id)
             topic.replies += 1
             topic.last_reply = post.payload_id
             topic.save()
@@ -39,7 +42,7 @@ class Post(models.Model):
     # User content
     title = models.CharField(max_length=100, null=True)
     content = models.CharField(max_length=20000)
-    date_submitted = models.DateTimeField(default=timezone.now)
+    date_submitted = models.IntegerField(default=0)
     reply_to = models.CharField(max_length=256, null=True, db_index=True)
     user_id = models.CharField(max_length=100)
 
@@ -47,7 +50,7 @@ class Post(models.Model):
 
     # Chain owner info
     payload_id = models.CharField(max_length=256, unique=True, db_index=True)
-    block_time = models.DateTimeField(null=True, default=None)
+    block_time = models.IntegerField(default=0)
     block_height = models.IntegerField(default=0)
 
     objects = PostManager()

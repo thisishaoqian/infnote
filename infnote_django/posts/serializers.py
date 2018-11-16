@@ -25,8 +25,6 @@ class LastReplyField(serializers.RelatedField):
 
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='payload_id', read_only=True)
-    date_submitted = TimestampField(required=True)
-    block_time = TimestampField(read_only=True, required=False)
     reply_to = serializers.CharField(required=False, allow_null=True, allow_blank=False)
     last_reply = LastReplyField(read_only=True)
     user = UserField(read_only=True, source='user_id')
@@ -55,7 +53,11 @@ class PostSerializer(serializers.ModelSerializer):
         except BadSignatureError:
             raise serializers.ValidationError('Invalid signature.')
 
-        attrs['payload_id'] = base58.b58encode(hashlib.sha256(json_data.encode('utf8')).digest()).decode('ascii')
+        # if not attrs.get('id'):
+        #     attrs['payload_id'] = base58.b58encode(hashlib.sha256(json_data.encode('utf8')).digest()).decode('ascii')
+        # else:
+        #     attrs['payload_id'] = attrs.get('id')
+
         return attrs
 
 
@@ -65,6 +67,13 @@ class PostBriefSerializer(PostSerializer):
     class Meta(PostSerializer.Meta):
         exclude = None
         fields = ('id', 'title', 'date_submitted', 'last_reply', 'user', 'replies', 'content')
+
+
+class PostImportSerializer(PostSerializer):
+    id = serializers.CharField(source='payload_id')
+
+    class Meta(PostSerializer.Meta):
+        read_only_fields = ()
 
 
 class PostBlockchainSerializer(PostSerializer):

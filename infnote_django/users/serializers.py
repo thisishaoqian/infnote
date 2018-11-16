@@ -10,13 +10,10 @@ from utils.signature import Key
 
 
 class UserSerializer(serializers.ModelSerializer):
-    date_created = TimestampField(read_only=True, required=False)
-    signature = serializers.CharField()
-
     class Meta:
         model = User
         fields = '__all__'
-        read_only_fields = ('date_created', 'is_confirmed', 'topics', 'replies')
+        read_only_fields = ('topics', 'replies', 'block_time', 'block_height')
 
     def validate(self, attrs):
         user_id = attrs.get('id')
@@ -37,9 +34,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserBriefSerializer(UserSerializer):
-
     class Meta(UserSerializer.Meta):
         fields = ('id', 'nickname', 'avatar', 'bio')
+
+
+class UserImportSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ('topics', 'replies')
 
 
 class UserBlockchainSerializer(UserSerializer):

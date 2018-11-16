@@ -30,7 +30,8 @@ ALLOWED_HOSTS = [
     'localhost',
     'infnote.com',
     'api.infnote.com',
-    '127.0.0.1'
+    '127.0.0.1',
+    '10.89.58.116'
 ]
 
 
@@ -58,10 +59,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
 
-    # User
+    # Custom
     'utils',
-    'users',
     'posts',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +106,12 @@ DATABASES = {
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'djongo',
         'NAME': 'infnote',
+    },
+    'chains': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'infnote_chain',
     }
 }
 
@@ -185,5 +192,5 @@ CRONJOBS = [
 
 
 # Blockchain Settings
-POST_CHAIN_ID = 'euqpN2vqsXMnu49D4QeV7VjzvZniweHCcx3ZD91wxkV1'
-USER_CHAIN_ID = 'qg6t8or6hqDtsq7DnqZ9hbGQeqMQBxdDk1A9dUhvdZA4'
+POST_CHAIN_ID = '28ZGzw29RoDLp3nXfV2e2tEKnaNwbUdaTXtGmzunfMiwk'
+USER_CHAIN_ID = '28nHA63qWiKDxLbWfeYaW3KQYXwP5QzADc4cChSgPJRyC'

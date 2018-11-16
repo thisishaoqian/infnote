@@ -1,5 +1,3 @@
-import bson
-
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -31,15 +29,14 @@ class ListPost(GenericAPIView):
         confirmed = request.query_params.get('confirmed', None)
         user_id = request.query_params.get('user', None)
 
-        # IMPORTANT: djongo has a query problem, it cannot support chained filter calls
-        params = {'reply_to': None}
+        # IMPORTANT: djongo has a query problem, reply_to just cannot put to front
         if confirmed is not None:
-            params['block_time'] = {'$ne': None}
+            queryset = queryset.filter(block_time__gt=0)
 
         if user_id is not None:
-            params['user_id'] = user_id
+            queryset = queryset.filter(user_id=user_id)
 
-        queryset = queryset.filter(**params)
+        queryset = queryset.filter(reply_to=None)
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
