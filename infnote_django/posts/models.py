@@ -46,6 +46,10 @@ class Post(models.Model):
     reply_to = models.CharField(max_length=256, null=True, db_index=True)
     user_id = models.CharField(max_length=100)
 
+    # TODO: There should be some sorts of mechanism to detect the content if it is NSFW
+    # Now is tagged by user.
+    nsfw = models.BooleanField(default=False)
+
     signature = models.CharField(max_length=256)
 
     # Chain owner info

@@ -28,6 +28,7 @@ class ListPost(GenericAPIView):
         queryset = self.get_queryset()
         confirmed = request.query_params.get('confirmed', None)
         user_id = request.query_params.get('user', None)
+        safe = request.query_params.get('safe', True)
 
         # IMPORTANT: djongo has a query problem, reply_to just cannot put to front
         if confirmed is not None:
@@ -35,6 +36,9 @@ class ListPost(GenericAPIView):
 
         if user_id is not None:
             queryset = queryset.filter(user_id=user_id)
+
+        if bool(int(safe)):
+            queryset = queryset.filter(nsfw=False)
 
         queryset = queryset.filter(reply_to=None)
         queryset = self.filter_queryset(queryset)
