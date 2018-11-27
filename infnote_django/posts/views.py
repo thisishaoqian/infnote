@@ -15,7 +15,8 @@ class CreatePost(APIView):
     def post(request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            RPCClient().create_post(serializer.save())
+            if RPCClient().create_post(serializer.validated_data) is not None:
+                serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
