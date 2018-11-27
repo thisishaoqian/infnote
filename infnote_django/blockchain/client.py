@@ -27,7 +27,10 @@ class Client(metaclass=Singleton):
     def create(chain_id, obj, serializer) -> str:
         with grpc.insecure_channel('localhost:32700') as channel:
             stub = BlockchainStub(channel)
-            data = serializer(data=obj).data
+            s = serializer(data=obj)
+            if not s.is_valid():
+                raise ValueError('Invalid data with specific serializer.')
+            data = s.validated_data
             string = json.JSONEncoder(ensure_ascii=False, separators=(',', ':')).encode(data)
             response = stub.create_block(Payload(chain_id=chain_id, content=string))
             if response.chain_id is not None and len(response.chain_id) > 0:
