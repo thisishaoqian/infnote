@@ -1,11 +1,9 @@
 import json
-import hashlib
-import base58
 
 from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
 
-from utils.serializers import TimestampField, TruncatedField
+from utils.serializers import TruncatedField
 from utils.signature import Key
 from users.serializers import UserField
 

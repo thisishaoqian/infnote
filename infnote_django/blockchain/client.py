@@ -1,7 +1,6 @@
 import grpc
 import json
 
-from datetime import datetime
 from django.conf import settings
 from users.models import User
 from users.serializers import UserBlockchainSerializer
@@ -32,7 +31,7 @@ class Client(metaclass=Singleton):
             string = json.JSONEncoder(ensure_ascii=False, separators=(',', ':')).encode(data)
             response = stub.create_block(Payload(chain_id=chain_id, content=string))
             if response.chain_id is not None and len(response.chain_id) > 0:
-                obj.block_time = datetime.utcfromtimestamp(response.time)
+                obj.block_time = response.time
                 obj.block_height = response.height
                 obj.save()
                 return response.chain_id

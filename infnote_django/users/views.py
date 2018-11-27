@@ -13,7 +13,8 @@ class CreateUser(APIView):
     def post(request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            RPCClient().create_user(serializer.save())
+            if RPCClient().create_user(serializer.validated_data) is not None:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
