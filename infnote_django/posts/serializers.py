@@ -1,4 +1,6 @@
 import json
+import base58
+import hashlib
 
 from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
@@ -51,10 +53,10 @@ class PostSerializer(serializers.ModelSerializer):
         except BadSignatureError:
             raise serializers.ValidationError('Invalid signature.')
 
-        # if not attrs.get('id'):
-        #     attrs['payload_id'] = base58.b58encode(hashlib.sha256(json_data.encode('utf8')).digest()).decode('ascii')
-        # else:
-        #     attrs['payload_id'] = attrs.get('id')
+        if not attrs.get('id'):
+            attrs['payload_id'] = base58.b58encode(hashlib.sha256(json_data.encode('utf8')).digest()).decode('ascii')
+        else:
+            attrs['payload_id'] = attrs.get('id')
 
         return attrs
 

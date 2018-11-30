@@ -15,3 +15,6 @@ class Block(models.Model):
         db_table = 'blocks'
         app_label = 'blockchain'
         managed = False
+
+
+

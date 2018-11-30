@@ -1,5 +1,4 @@
 from djongo import models
-from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 
 from users.models import User
