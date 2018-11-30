@@ -3,7 +3,6 @@ import re
 
 from ecdsa.keys import BadSignatureError
 from rest_framework import serializers
-from utils.serializers import TimestampField
 from .models import User
 
 from utils.signature import Key
