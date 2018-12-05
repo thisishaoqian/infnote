@@ -56,7 +56,7 @@ class Command(BaseCommand):
                 .filter(chain_id=settings.POST_CHAIN_ID, height__gt=post_height)\
                 .order_by('height'):
             try:
-                content = json.JSONDecoder().decode(base58.b58decode(block.payload).decode('utf8'))
+                content = json.JSONDecoder().decode(block.payload.decode('utf8'))
             except Exception:
                 print('Invalid Format')
                 continue

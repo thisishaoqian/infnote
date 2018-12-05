@@ -16,6 +16,7 @@ class Client(metaclass=Singleton):
         self.user_chain = settings.USER_CHAIN_ID
 
     def create_post(self, post):
+        post['id'] = post.pop('payload_id')
         self.create(self.post_chain, post, PostBlockchainSerializer)
 
     def create_user(self, user):
