@@ -31,13 +31,14 @@ class Client(metaclass=Singleton):
                 chain_id=chain_id,
                 content=content
             ))
-            if response.chain_id is not None and len(response.chain_id) > 0:
+            if response.chain_id == 'defered':
+                return ''
+            elif response.chain_id is not None and len(response.chain_id) > 0:
                 data['block_time'] = response.time
                 data['block_height'] = response.height
                 s = serializer(data=data)
                 if s.is_valid():
                     s.save()
                 return response.chain_id
-            elif response.chain_id == 'defered':
-                return ''
+
             raise ValueError('Received a reponse without chain_id, there might be not the correct chain existed.')
