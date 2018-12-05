@@ -15,24 +15,19 @@ class Client(metaclass=Singleton):
         self.post_chain = settings.POST_CHAIN_ID
         self.user_chain = settings.USER_CHAIN_ID
 
-    def create_post(self, post, public_key):
-        post['id'] = post.pop('payload_id')
-        self.create(self.post_chain, public_key, post, PostBlockchainSerializer)
+    def create_post(self, post):
+        self.create(self.post_chain, post, PostBlockchainSerializer)
 
     def create_user(self, user):
-        public_key = user.pop('public_key')
-        self.create(self.user_chain, public_key, user, UserBlockchainSerializer)
+        self.create(self.user_chain, user, UserBlockchainSerializer)
 
     @staticmethod
-    def create(chain_id, public_key, data, serializer) -> str:
+    def create(chain_id, data, serializer) -> str:
         with grpc.insecure_channel('localhost:32700') as channel:
             stub = BlockchainStub(channel)
-            signature = data.pop('signature')
             content = json.JSONEncoder(ensure_ascii=False, separators=(',', ':')).encode(data).encode('utf8')
             response = stub.create_block(Payload(
                 chain_id=chain_id,
-                public_key=public_key,
-                signature=signature,
                 content=content
             ))
             if response.chain_id is not None and len(response.chain_id) > 0:

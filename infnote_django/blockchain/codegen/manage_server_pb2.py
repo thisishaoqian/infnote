@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='build',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x13manage_server.proto\x12\x05\x62uild\"l\n\x07\x43ommand\x12\x0c\n\x04name\x18\x01 \x01(\t\x12&\n\x04\x61rgs\x18\x02 \x03(\x0b\x32\x18.build.Command.ArgsEntry\x1a+\n\tArgsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x16\n\x06Result\x12\x0c\n\x04line\x18\x01 \x01(\t\"S\n\x07Payload\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\t\x12\x12\n\npublic_key\x18\x02 \x01(\t\x12\x11\n\tsignature\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x04 \x01(\x0c\"q\n\x05\x42lock\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\t\x12\x12\n\nblock_hash\x18\x02 \x01(\t\x12\x11\n\tprev_hash\x18\x03 \x01(\t\x12\x11\n\tsignature\x18\x04 \x01(\t\x12\x0c\n\x04time\x18\x05 \x01(\x03\x12\x0e\n\x06height\x18\x06 \x01(\x03\x32\x38\n\x06Manage\x12.\n\x0brun_command\x12\x0e.build.Command\x1a\r.build.Result0\x01\x32:\n\nBlockchain\x12,\n\x0c\x63reate_block\x12\x0e.build.Payload\x1a\x0c.build.Blockb\x06proto3')
+  serialized_pb=_b('\n\x13manage_server.proto\x12\x05\x62uild\"l\n\x07\x43ommand\x12\x0c\n\x04name\x18\x01 \x01(\t\x12&\n\x04\x61rgs\x18\x02 \x03(\x0b\x32\x18.build.Command.ArgsEntry\x1a+\n\tArgsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x16\n\x06Result\x12\x0c\n\x04line\x18\x01 \x01(\t\",\n\x07Payload\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"q\n\x05\x42lock\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\t\x12\x12\n\nblock_hash\x18\x02 \x01(\t\x12\x11\n\tprev_hash\x18\x03 \x01(\t\x12\x11\n\tsignature\x18\x04 \x01(\t\x12\x0c\n\x04time\x18\x05 \x01(\x03\x12\x0e\n\x06height\x18\x06 \x01(\x03\x32\x38\n\x06Manage\x12.\n\x0brun_command\x12\x0e.build.Command\x1a\r.build.Result0\x01\x32:\n\nBlockchain\x12,\n\x0c\x63reate_block\x12\x0e.build.Payload\x1a\x0c.build.Blockb\x06proto3')
 )
 
 
@@ -146,22 +146,8 @@ _PAYLOAD = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='public_key', full_name='build.Payload.public_key', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='signature', full_name='build.Payload.signature', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='content', full_name='build.Payload.content', index=3,
-      number=4, type=12, cpp_type=9, label=1,
+      name='content', full_name='build.Payload.content', index=1,
+      number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -179,7 +165,7 @@ _PAYLOAD = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=164,
-  serialized_end=247,
+  serialized_end=208,
 )
 
 
@@ -244,8 +230,8 @@ _BLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=249,
-  serialized_end=362,
+  serialized_start=210,
+  serialized_end=323,
 )
 
 _COMMAND_ARGSENTRY.containing_type = _COMMAND
@@ -301,8 +287,8 @@ _MANAGE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=364,
-  serialized_end=420,
+  serialized_start=325,
+  serialized_end=381,
   methods=[
   _descriptor.MethodDescriptor(
     name='run_command',
@@ -325,8 +311,8 @@ _BLOCKCHAIN = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   serialized_options=None,
-  serialized_start=422,
-  serialized_end=480,
+  serialized_start=383,
+  serialized_end=441,
   methods=[
   _descriptor.MethodDescriptor(
     name='create_block',

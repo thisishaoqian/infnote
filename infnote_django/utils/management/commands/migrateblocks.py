@@ -1,4 +1,5 @@
 import json
+import base58
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -54,7 +55,7 @@ class Command(BaseCommand):
         for block in Block.objects.using('chains')\
                 .filter(chain_id=settings.POST_CHAIN_ID, height__gt=post_height)\
                 .order_by('height'):
-            content = json.JSONDecoder().decode(block.payload.decode('utf8'))
+            content = json.JSONDecoder().decode(base58.b58decode(block.payload).decode('utf8'))
             content['block_height'] = block.height
             content['block_time'] = block.time
             post_height = block.height
