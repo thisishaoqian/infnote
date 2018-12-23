@@ -15,6 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('topics', 'replies', 'block_time', 'block_height')
 
     def validate(self, attrs):
+        email = attrs.get('email')
+        if not re.match('@pku.edu.cn$', email):
+            raise serializers.ValidationError(
+                'Users only who have a PKU mail address are allow to register at this moment.'
+            )
+
         user_id = attrs.get('id')
         if not re.match('[a-zA-Z0-9_-]{1,30}', user_id):
             raise serializers.ValidationError('User ID can only be combined by characters, numbers, - and _.')

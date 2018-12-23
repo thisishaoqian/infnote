@@ -29,7 +29,7 @@ class User(models.Model):
     # User content
     id = models.CharField(max_length=100, unique=True, primary_key=True)
     nickname = models.CharField(max_length=100, unique=True)
-    email = models.CharField(max_length=100, null=True)
+    email = models.CharField(max_length=100, unique=True, null=False, blank=False)
     avatar = models.CharField(max_length=256, null=True)
     gender = models.IntegerField(choices=GENDER_CHOICES, default=GENDER_UNKNOWN)
     bio = models.CharField(max_length=256, null=True)
